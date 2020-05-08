@@ -1,0 +1,45 @@
+{
+	"cloud": true,
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "其文乐趣"
+			}
+		},
+		{
+			"path": "pages/me/index",
+			"style": {
+				"navigationBarTitleText": "个人中心"
+			}
+		}
+    ],
+	"globalStyle": {
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#4AC41C",
+		"backgroundColor": "#FFFFFF"
+	},
+	"tabBar":{
+	        "color":"#000",
+	        "backgroundColor":"white",
+	        "fontSize":"14px",
+	        "height":"44px",
+	        "selectedColor":"#4CD964",
+	        "position":"bottom",
+	        "list":[
+	            {
+	                "pagePath":"pages/index/index",
+	                "iconPath":"static/img/tabBar/home.png",
+	                "selectedIconPath":"static/img/tabBar/home-cur.png",
+	                "text":"首页"
+	            },
+	            {
+	                "pagePath":"pages/me/index",
+	                "iconPath":"static/img/tabBar/me.png",
+	                "selectedIconPath":"static/img/tabBar/me-cur.png",
+	                "text":"我"
+	            }
+	        ]
+	    }
+}
