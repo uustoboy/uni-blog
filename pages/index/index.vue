@@ -15,8 +15,8 @@
 
 <script>
 	import mIcon from '../../components/icon/m-icon.vue'
-	import uniCard from '@/components/uni-card/uni-card.vue'
-	import uniTag from "@/components/uni-tag/uni-tag.vue"
+	import uniCard from '@/components/uni-ui/uni-card/uni-card.vue'
+	import uniTag from "@/components/uni-ui/uni-tag/uni-tag.vue"
 	export default {
 		components:{
 			mIcon,
@@ -41,7 +41,7 @@
 	@include wh(100vw,100vh);
 }
 .container{
-	@include bgc(#ccc);
+	@include bgc(#F2F2F2);
 }
 
 .uni-list{

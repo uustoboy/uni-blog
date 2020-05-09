@@ -13,6 +13,12 @@
 				"navigationBarTitleText": "个人中心"
 			}
 		}
+        ,{
+            "path" : "pages/info/info",
+            "style" : {
+				"navigationBarTitleText": "关于我"
+			}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
