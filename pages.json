@@ -28,11 +28,12 @@
 	},
 	"tabBar":{
 	        "color":"#000",
-	        "backgroundColor":"white",
-	        "fontSize":"14px",
-	        "height":"44px",
-	        "selectedColor":"#4CD964",
-	        "position":"bottom",
+			"borderStyle": "black",
+		   "backgroundColor":"#fff",
+		   "fontSize":"14px",
+		   "height":"44px",
+		   "selectedColor":"#4AC41C",
+		   "position":"bottom",
 	        "list":[
 	            {
 	                "pagePath":"pages/index/index",

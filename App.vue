@@ -14,6 +14,7 @@ export default {
 		wx.cloud.init();
 		let that = this;
 		let userInfo = uni.getStorageSync('userInfo')||'';
+		console.log(userInfo.openid);
 		if(userInfo.openid){
 			//更新登陆状态
 			uni.getStorage({

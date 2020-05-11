@@ -11,7 +11,14 @@
 				<uni-list-item title="About Me" :show-extra-icon="true" :extra-icon="{color: '#4cd964',size: '22',type: 'info-filled'}" @click="goInfo"></uni-list-item>
 			</uni-list>
 		</view>
-		<button  open-type='getUserInfo'   @click="getUserInfsso">登录</button>
+		{{hasLogin}}
+		<view v-if="hasLogin">
+			<view>{{userInfo.nickName}}</view>
+			<view><image :src="userInfo.avatarUrl"/></view>
+		</view>
+		<view v-else >
+			<button open-type='getUserInfo'   @click="getUserInfsso">登录</button>
+		</view>
 		
 	</view>
 </template>
@@ -21,7 +28,12 @@
 	import uniListItem from "@/components/uni-ui/uni-list-item/uni-list-item.vue"
 	import uniList from "@/components/uni-ui/uni-list/uni-list.vue"
 	import uniIcons from "@/components/uni-ui/uni-icons/uni-icons.vue" 
-	import uCharts from '../../components/u-charts/u-charts.js';
+	import uCharts from '../../components/u-charts/u-charts.js'
+	
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex'
 	var _self;
 	var canvaPie=null;
 	export default {
@@ -31,6 +43,7 @@
 			uniListItem,
 			uniIcons
 		},
+		computed:mapState(['hasLogin','userInfo']),
 		data() {
 			return {
 				cWidth:'',
@@ -72,44 +85,32 @@
 			this.cWidth=uni.upx2px(710);
 			this.cHeight=uni.upx2px(600);
 			this.showPie();
+			
+			
+		},
+		onShow: function() {
+			console.log('App Show11');
+			
+			let that = this;
+			let userInfo = uni.getStorageSync('userInfo')||'';
+			console.log(userInfo.openid);
+			if(userInfo.openid){
+				console.log(11111111)
+				//更新登陆状态
+				uni.getStorage({
+					key:'userInfo',
+					success:res=>{
+						this.login(res.data);
+					}
+				})
+			}
 		},
 		created(){
 		},
 		methods: {
+			...mapMutations(['login']),
 			getUserInfsso(e){
-				let that = this;
-				console.log(11)
-				 
-							// wx登录
-							// wx.login({
-							//   success (res) {
-							// 	if (res.code) {
-							// 	  //发起网络请求
-							// 	  var code = res.code
-							// 		// 获取微信用户信息
-							// 		wx.getUserInfo({
-							// 		  success: function(res) {
-							// 			var userInfo = res.userInfo
-							// 			var nickName = userInfo.nickName
-							// 			var avatarUrl = userInfo.avatarUrl
-							// 			var gender = userInfo.gender //性别 0：未知、1：男、2：女
-							// 			var province = userInfo.province
-							// 			var city = userInfo.city
-							// 			var country = userInfo.country
-										
-							// 			console.log(userInfo)
-							// 		  },
-							// 		  fail:res=>{
-							// 			  // 获取失败的去引导用户授权 
-							// 		   }
-							// 		})
-									
-							// 	} else {
-									
-							// 	}
-							//   }
-							// })
-							
+				
 			},
 			goInfo(){
 				uni.navigateTo({
