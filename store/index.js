@@ -17,7 +17,7 @@ const store = new Vuex.Store({//全局变量定义
 			state.userInfo = user || '';
 			state.openid = user.openid || '';
 			state.userName = user.nickName || '';
-			console.log('mutationsUser',user);
+			
 			uni.setStorage({
 				key:'userInfo',
 				data:user

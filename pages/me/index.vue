@@ -1,5 +1,19 @@
 <template>
 	<view class="container">
+		<view class="me-list me-head">
+			<view class="me-headLeft">
+				<image class="me-avatar" :src="oneself.avatarUrl"/>
+			</view>
+			<view class="me-headRight">
+				<view class="me-name">
+					{{oneself.nickName}}
+				</view>
+				<view class="me-wechatID">
+					微信号:  {{oneself.wechat}}
+				</view>
+				<m-icon class="me-code" type="code" color="#4AC41C" size="30" @click="goCode"></m-icon>
+			</view>
+		</view>
 		<view class="me-list">
 			<view class="me-skill"><uni-title type="h3" title="技能图谱" color="#000" ></uni-title></view>
 			<view class="charts-main">
@@ -9,17 +23,9 @@
 		<view class="me-list">
 			<uni-list >
 				<uni-list-item title="About Me" :show-extra-icon="true" :extra-icon="{color: '#4cd964',size: '22',type: 'info-filled'}" @click="goInfo"></uni-list-item>
+				<uni-list-item title="@uustoboy"  thumb="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1589213252098&di=e58c164459cc818c71abd3105f1c415b&imgtype=0&src=http%3A%2F%2Fku.90sjimg.com%2Felement_pic%2F01%2F16%2F99%2F42570527ee4ed5b.jpg" @click="goGithub"></uni-list-item>
 			</uni-list>
 		</view>
-		{{hasLogin}}
-		<view v-if="hasLogin">
-			<view>{{userInfo.nickName}}</view>
-			<view><image :src="userInfo.avatarUrl"/></view>
-		</view>
-		<view v-else >
-			<button open-type='getUserInfo'   @click="getUserInfsso">登录</button>
-		</view>
-		
 	</view>
 </template>
 
@@ -28,8 +34,9 @@
 	import uniListItem from "@/components/uni-ui/uni-list-item/uni-list-item.vue"
 	import uniList from "@/components/uni-ui/uni-list/uni-list.vue"
 	import uniIcons from "@/components/uni-ui/uni-icons/uni-icons.vue" 
-	import uCharts from '../../components/u-charts/u-charts.js'
-	
+	import uCharts from '@/components/u-charts/u-charts.js'
+	import clipboard from "@/components/dc-clipboard/clipboard.js"
+	import mIcon from "@/components/icon/m-icon.vue"
 	import {
 		mapState,
 		mapMutations
@@ -41,11 +48,13 @@
 			uniTitle,
 			uniList,
 			uniListItem,
-			uniIcons
+			uniIcons,
+			mIcon
 		},
 		computed:mapState(['hasLogin','userInfo']),
 		data() {
 			return {
+				oneself:'',
 				cWidth:'',
 				cHeight:'',
 				pixelRatio:1,
@@ -82,10 +91,20 @@
 		},
 		onLoad() {
 			_self = this;
+			let that = this;
 			this.cWidth=uni.upx2px(710);
 			this.cHeight=uni.upx2px(600);
 			this.showPie();
-			
+			wx.cloud.init();
+			wx.cloud.callFunction({
+				name:'userInfo',
+				success:cloudRes=>{
+					that.oneself = cloudRes.result.data.data[0];
+				},
+				fail:res=>{
+					console.log('云函数调用失败!');
+				}
+			})
 			
 		},
 		onShow: function() {
@@ -93,9 +112,9 @@
 			
 			let that = this;
 			let userInfo = uni.getStorageSync('userInfo')||'';
-			console.log(userInfo.openid);
+			// console.log(userInfo.openid);
 			if(userInfo.openid){
-				console.log(11111111)
+				// console.log(11111111)
 				//更新登陆状态
 				uni.getStorage({
 					key:'userInfo',
@@ -109,8 +128,26 @@
 		},
 		methods: {
 			...mapMutations(['login']),
+			goCode(){
+				console.log(111)
+			},
 			getUserInfsso(e){
 				
+			},
+			goGithub(){
+				// clipboard.setText('https://github.com/uustoboy');
+				// uni.hideToast()
+				uni.setClipboardData({
+						data:'https://github.com/uustoboy',
+						success() {
+							// uni.hideToast()
+							// uni.showToast({
+							// 	title: '复制成功',
+							// 	duration:2000,
+							// 	icon:"none"
+							// })
+						}	
+					})
 			},
 			goInfo(){
 				uni.navigateTo({
@@ -164,6 +201,30 @@
 		@include bgc(#F2F2F2);
 		@include w(100%);
 		@include over-x(hidden);
+	}
+	
+	.me-head{
+		@include rel;
+		@include flex;
+		@include pad(10px);
+		@include box-sz();
+	}
+	.me-headLeft{
+		@include wh(60px);
+		@include mar(0 20px 0 0);
+	}
+	.me-avatar{
+		@include wh(60px);
+		@include bdrs(50%);
+	}
+	.me-name{
+		@include flcb(25,30,#000);
+	}
+	.me-code{
+		@include abs((r:20px,t:28%));
+	}
+	.me-wechatID{
+		@include flc(16,30,#ccc);
 	}
 	.charts-pie{
 		width: 710upx; 

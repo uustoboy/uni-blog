@@ -1,7 +1,7 @@
 
 <template>
 	<view>
-		<view class="icon" :class="['uni-'+type]" :style="{color:color,'font-size':fontSize,'background':background}" @click="onClick()"></view>
+		<view class="iconfont" :class="['uni-'+type]" :style="{color:color,'font-size':fontSize,'background':background}" @click="onClick()"></view>
 	</view>
 </template>
 

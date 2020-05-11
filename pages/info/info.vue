@@ -1,6 +1,8 @@
 <template>
 	<view class="info">
 		<view class="info-main">
+			<uni-title type="h2" title="HTML工程师" color="#4CD964" ></uni-title>
+			<uni-title type="h3" title="十年工作一年工作经验 专业切图仔" color="#4CD964" ></uni-title>
 			<uni-title type="h3" title="联系方式" color="#4CD964" ></uni-title>
 			<view class="info-relation">
 				<view class="info-list"><text class="info-name">QQ:</text>278659513</view>
