@@ -1,5 +1,6 @@
 <template>
 	<view class="container">
+		
 		<view class="me-list me-head">
 			<view class="me-headLeft">
 				<image class="me-avatar" :src="oneself.avatarUrl"/>
@@ -17,8 +18,11 @@
 		<view class="me-list">
 			<view class="me-skill"><uni-title type="h3" title="技能图谱" color="#000" ></uni-title></view>
 			<view class="charts-main">
-				<canvas canvas-id="canvasPie" id="canvasPie" class="charts-pie" @touchstart="touchPie"></canvas>
+				<view v-show="popup">
+					<canvas canvas-id="canvasPie" id="canvasPie" class="charts-pie" @touchstart="touchPie"></canvas>
+				</view>
 			</view>
+			
 		</view>
 		<view class="me-list">
 			<uni-list >
@@ -26,6 +30,14 @@
 				<uni-list-item title="@uustoboy"  thumb="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1589213252098&di=e58c164459cc818c71abd3105f1c415b&imgtype=0&src=http%3A%2F%2Fku.90sjimg.com%2Felement_pic%2F01%2F16%2F99%2F42570527ee4ed5b.jpg" @click="goGithub"></uni-list-item>
 			</uni-list>
 		</view>
+		<uni-popup ref="popup" type="center" class="wechat-popupMain" :mask-click="false">
+			<view class="wechat-popup">
+				<view>
+					<image src="../../static/img/wechat-code.png" mode="widthFix" class="wechat-codeImg"></image>
+					<button size="default" @click="hidePop" type="warn">关闭</button>
+				</view>	
+			</view>
+		</uni-popup>
 	</view>
 </template>
 
@@ -34,6 +46,7 @@
 	import uniListItem from "@/components/uni-ui/uni-list-item/uni-list-item.vue"
 	import uniList from "@/components/uni-ui/uni-list/uni-list.vue"
 	import uniIcons from "@/components/uni-ui/uni-icons/uni-icons.vue" 
+	import uniPopup from "@/components/uni-ui/uni-popup/uni-popup.vue"
 	import uCharts from '@/components/u-charts/u-charts.js'
 	import clipboard from "@/components/dc-clipboard/clipboard.js"
 	import mIcon from "@/components/icon/m-icon.vue"
@@ -49,11 +62,13 @@
 			uniList,
 			uniListItem,
 			uniIcons,
-			mIcon
+			mIcon,
+			uniPopup
 		},
 		computed:mapState(['hasLogin','userInfo']),
 		data() {
 			return {
+				popup:true,
 				oneself:'',
 				cWidth:'',
 				cHeight:'',
@@ -99,7 +114,7 @@
 			wx.cloud.callFunction({
 				name:'userInfo',
 				success:cloudRes=>{
-					that.oneself = cloudRes.result.data.data[0];
+					that.oneself = cloudRes.result.data[0];
 				},
 				fail:res=>{
 					console.log('云函数调用失败!');
@@ -128,8 +143,18 @@
 		},
 		methods: {
 			...mapMutations(['login']),
+			hidePop(){
+				this.$refs.popup.close();
+				this.popup = true;
+				uni.setClipboardData({
+				    data: 'tianqi_2786',
+				    success: function () {
+				    }
+				});
+			},
 			goCode(){
-				console.log(111)
+				this.$refs.popup.open();
+				this.popup = false;
 			},
 			getUserInfsso(e){
 				
@@ -226,7 +251,7 @@
 	.me-wechatID{
 		@include flc(16,30,#ccc);
 	}
-	.charts-pie{
+	.charts-pie,.charts-main{
 		width: 710upx; 
 		height:600upx;
 		background-color: #FFFFFF;
@@ -240,5 +265,20 @@
 	}
 	.me-skill{
 		@include mar( 0 0 0 10px);
+	}
+	.wechat-popupMain{
+		z-index:500;
+	}
+	.wechat-popup{
+		@include flex;
+		@include jc(center);
+		@include ai(center);
+		@include wh(80vw,80vh);
+		@include bgc(#fff);
+		@include bdrs(5px);
+	}
+	.wechat-codeImg{
+		@include w(70vw);
+		@include mar(0 0 5px 0);
 	}
 </style>

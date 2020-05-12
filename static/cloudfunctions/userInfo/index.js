@@ -27,7 +27,7 @@ exports.main = async (event, context) => {
 
 
   return {
-   data:userInfo
+   data:userInfo.data
   }
 }
 
