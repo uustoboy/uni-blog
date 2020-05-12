@@ -2,6 +2,12 @@
 	"cloud": true,
 	"pages": [
 		{
+		    "path" : "pages/search/search",
+		    "style" : {
+				"navigationBarTitleText": "搜索"
+			}
+		},
+		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "其文乐趣"
@@ -17,6 +23,13 @@
             "path" : "pages/info/info",
             "style" : {
 				"navigationBarTitleText": "关于我"
+			}
+        }
+        
+        ,{
+            "path" : "pages/classify/classify",
+            "style" : {
+				"navigationBarTitleText": "分类"
 			}
         }
     ],
@@ -41,6 +54,18 @@
 	                "selectedIconPath":"static/img/tabBar/home-cur.png",
 	                "text":"首页"
 	            },
+				{
+				    "pagePath":"pages/search/search",
+				    "iconPath":"static/img/tabBar/search.png",
+				    "selectedIconPath":"static/img/tabBar/search-cur.png",
+				    "text":"搜索"
+				},
+				{
+				    "pagePath":"pages/classify/classify",
+				    "iconPath":"static/img/tabBar/classify.png",
+				    "selectedIconPath":"static/img/tabBar/classify-cur.png",
+				    "text":"分类"
+				},
 	            {
 	                "pagePath":"pages/me/index",
 	                "iconPath":"static/img/tabBar/me.png",
