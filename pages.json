@@ -2,6 +2,12 @@
 	"cloud": true,
 	"pages": [
 		{
+		    "path" : "pages/classify/classify",
+		    "style" : {
+				"navigationBarTitleText": "分类"
+			}
+		},
+		{
 		    "path" : "pages/search/search",
 		    "style" : {
 				"navigationBarTitleText": "搜索"
@@ -23,13 +29,6 @@
             "path" : "pages/info/info",
             "style" : {
 				"navigationBarTitleText": "关于我"
-			}
-        }
-        
-        ,{
-            "path" : "pages/classify/classify",
-            "style" : {
-				"navigationBarTitleText": "分类"
 			}
         }
     ],

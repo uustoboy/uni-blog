@@ -114,7 +114,7 @@
 			wx.cloud.callFunction({
 				name:'userInfo',
 				success:cloudRes=>{
-					that.oneself = cloudRes.result.data[0];
+					that.oneself = cloudRes.result.data;
 				},
 				fail:res=>{
 					console.log('云函数调用失败!');
