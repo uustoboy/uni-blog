@@ -2,6 +2,12 @@
 	"cloud": true,
 	"pages": [
 		{
+		    "path" : "pages/editor/editor",
+		    "style" : {
+				"navigationBarTitleText": "编辑"
+			}
+		},
+		{
 		    "path" : "pages/classify/classify",
 		    "style" : {
 				"navigationBarTitleText": "分类"
@@ -31,6 +37,7 @@
 				"navigationBarTitleText": "关于我"
 			}
         }
+        
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
