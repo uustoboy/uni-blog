@@ -1,6 +1,9 @@
 <template>
 	<view class="container">
 		<view class="page-body">
+			<uni-title type="h3" title="标题" align="center" color="#000" ></uni-title>
+			<input  type="text"  v-model="title"   
+                    placeholder="请输入文章标题" @input="onKeyUserNameInput" class="title-input"  />
 			<view class='wrapper'>
 				<view class='toolbar' @tap="format">
 					<view :class="formats.code ? 'ql-active' : ''" class="iconfont icon-zitijiacu" data-name="code"></view>
@@ -62,8 +65,20 @@
 				<editor id="editor" class="ql-container" placeholder="开始输入..." showImgSize showImgToolbar showImgResize
 				 @statuschange="onStatusChange" :read-only="readOnly" @ready="onEditorReady">
 				</editor>
+				<biner-input-tags @change="change" :selectlist='selectlist' :disabled='disabled' :placeholder='placeholder'></biner-input-tags>
 				<button @click="publishArticle">发布</button>
 				<rich-text :nodes="strings"></rich-text>
+				 <u-parse :content="article" @preview="preview" @navigate="navigate" />
+				 
+				 
+				 
+				 <byui-markdown-editor
+				       ref="mde"
+				       v-model="value"
+				       @show-html="handleShowHtml"
+				     ></byui-markdown-editor>
+					 
+					 
 			</view>
 		</view>
 
@@ -71,15 +86,56 @@
 </template>
 
 <script>
+	import uniTitle from "@/components/uni-ui/uni-title/uni-title.vue"
+	import binerInputTags from '@/components/biner-input-tags/biner-input-tags'
+	import uParse from '@/components/gaoyia-parse/parse.vue'
 	export default {
+		components:{
+			uniTitle,
+			binerInputTags,
+			uParse
+		},
 		data() {
 			return {
+				 value: "# vue-admin-beautiful",
+				      html: '<h1 id="vue-admin-beautiful">vue-admin-beautiful</h1>',
                 readOnly: false,
 				formats: {},
-				strings:''
+				strings:'<p>asdas<code>var a="11"</code></p>',
+				 article: '<p wx:nodeid="62">dsfsfs</p><p wx:nodeid="111">sdfsdf</p><p wx:nodeid="114">&lt;code&gt;var a=1</p><p wx:nodeid="117">&lt;/code&gt;</p>',
+				title:'',
+				 disabled:false,//不禁用
+				    // 默认的数组 不填默认的是空数组
+				    selectlist:[],
+				    // 默认提示
+				    placeholder:'请输入标签'
 			}
 		},
 		methods: {
+			handleAddText() {
+			      this.$refs.mde.add("\n### 新增加的内容");
+			    },
+			    handleAddImg() {
+			      this.$refs.mde.add(
+			        "\n![](https://chu1204505056.gitee.io/byui-bookmarks/img/ewm.png)"
+			      );
+			    },
+			    handleShowHtml(html) {
+			      this.html = html;
+			    },
+			// 监听变化的数据
+			change(arr){
+				console.log(arr)
+				if(arr.length>0){
+					this.selectlist=arr;
+				}else{
+					this.selectlist=[];
+				}
+				
+			},
+			onKeyUserNameInput(event){
+				this.title = event.target.value;
+			},
 			publishArticle(){
 				let that = this;
 				this.editorCtx.getContents({
@@ -168,9 +224,18 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
 	@import "./editor-icon.css";
-
+	@import url("/components/gaoyia-parse/parse.css");
+	.title-input{
+		@include  mar(10px);
+		@include bd(1px solid #ccc);
+		@include flc(16px,40px,#000);
+		@include h(40px);
+		@include pad(0 10px);
+		@include box-sz();
+	}
+	
 	.wrapper {
 		padding: 5px;
 	}
@@ -201,6 +266,8 @@
 		margin-top: 20px;
 		font-size: 16px;
 		line-height: 1.5;
+		@include bd(1px solid #ccc);
+		@include mar(0 0 10px 0);
 	}
 
 	.ql-active {
