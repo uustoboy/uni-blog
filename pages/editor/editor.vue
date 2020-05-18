@@ -59,26 +59,25 @@
 					<view class="iconfont icon-shanchu" @tap="clear"></view>
 					<view :class="formats.direction === 'rtl' ? 'ql-active' : ''" class="iconfont icon-direction-rtl" data-name="direction"
 					 data-value="rtl"></view>
-
 				</view>
 
 				<editor id="editor" class="ql-container" placeholder="开始输入..." showImgSize showImgToolbar showImgResize
 				 @statuschange="onStatusChange" :read-only="readOnly" @ready="onEditorReady">
 				</editor>
-				<biner-input-tags @change="change" :selectlist='selectlist' :disabled='disabled' :placeholder='placeholder'></biner-input-tags>
+				<view class="in-time">
+					<view class="time-name">输入时间:</view>
+					<KXDateTime :data='date' :end='enddate' :start='startdate' @rundata='kxdatetime'></KXDateTime>
+				</view>
+				<view class="label-main">
+					<biner-input-tags @change="changeClassify" :selectlist='selectlistClassify' :disabled='disabledClassify' :placeholder='placeholderClassify'></biner-input-tags>
+				</view>
+				<view class="label-main">
+					<biner-input-tags @change="change" :selectlist='selectlist' :disabled='disabled' :placeholder='placeholder'></biner-input-tags>
+				</view>
+				<uni-title type="h3" title="摘要" align="center" color="#000" ></uni-title>
+				<textarea  placeholder="请输入摘要" class="abstract" :value="textareaValue" @blur="bindTextAreaBlur"/>
 				<button @click="publishArticle">发布</button>
-				<rich-text :nodes="strings"></rich-text>
-				 <u-parse :content="article" @preview="preview" @navigate="navigate" />
-				 
-				 
-				 
-				 <byui-markdown-editor
-				       ref="mde"
-				       v-model="value"
-				       @show-html="handleShowHtml"
-				     ></byui-markdown-editor>
-					 
-					 
+				<u-parse :content="article" @preview="preview" @navigate="navigate" />			 
 			</view>
 		</view>
 
@@ -89,29 +88,44 @@
 	import uniTitle from "@/components/uni-ui/uni-title/uni-title.vue"
 	import binerInputTags from '@/components/biner-input-tags/biner-input-tags'
 	import uParse from '@/components/gaoyia-parse/parse.vue'
+	 import KXDateTime from "@/components/kx-datetime/kx-datetime.vue"
 	export default {
 		components:{
 			uniTitle,
 			binerInputTags,
-			uParse
+			uParse,
+			KXDateTime
 		},
 		data() {
 			return {
-				 value: "# vue-admin-beautiful",
-				      html: '<h1 id="vue-admin-beautiful">vue-admin-beautiful</h1>',
+				date:'1991-01-01 00:00',
+				value: "# vue-admin-beautiful",
+				html: '<h1 id="vue-admin-beautiful">vue-admin-beautiful</h1>',
                 readOnly: false,
 				formats: {},
 				strings:'<p>asdas<code>var a="11"</code></p>',
 				 article: '<p wx:nodeid="62">dsfsfs</p><p wx:nodeid="111">sdfsdf</p><p wx:nodeid="114">&lt;code&gt;var a=1</p><p wx:nodeid="117">&lt;/code&gt;</p>',
 				title:'',
-				 disabled:false,//不禁用
-				    // 默认的数组 不填默认的是空数组
-				    selectlist:[],
-				    // 默认提示
-				    placeholder:'请输入标签'
+				disabled:false,//不禁用
+				// 默认的数组 不填默认的是空数组
+				selectlist:[],
+				// 默认提示
+				placeholder:'请输入标签',
+				disabledClassify:false,//不禁用
+				   // 默认的数组 不填默认的是空数组
+				selectlistClassify:[],
+				   // 默认提示
+				placeholderClassify:'请输入分类',
+				textareaValue:''
 			}
 		},
 		methods: {
+			bindTextAreaBlur: function (e) {
+				this.textareaValue=e.detail.value;
+			 },
+			 kxdatetime(e){
+			            this.date=e
+			        },
 			handleAddText() {
 			      this.$refs.mde.add("\n### 新增加的内容");
 			    },
@@ -133,15 +147,54 @@
 				}
 				
 			},
+			// 监听变化的数据
+			changeClassify(arr){
+				console.log(arr)
+				if(arr.length>0){
+					this.selectlistClassify=arr;
+				}else{
+					this.selectlistClassify=[];
+				}
+				
+			},
 			onKeyUserNameInput(event){
 				this.title = event.target.value;
 			},
 			publishArticle(){
 				let that = this;
+				// title:event.title,
+				// date:event.data,
+				// article:event.article,
+				// digest:event.digest,
+				// tags:event.tags,
+				// classify:event.classify
 				this.editorCtx.getContents({
 					success:(res)=>{
-						console.log(res);
-						that.strings=res.html;
+						console.log(res.html);
+						console.log(that.title);
+						console.log(that.date);
+						//小程序端调用方法
+						wx.cloud.init();
+						wx.cloud.callFunction({
+						  // 需要调用的云函数名
+						  name: 'addArticle',
+						  // 传给云函数的参数
+						  data: {
+						    title:that.title,
+						    date:that.date,
+						    article:res.html,
+						    digest:that.textareaValue,
+						    tags:that.selectlist,
+						    classify:that.selectlistClassify
+						  },
+						  success: function(res) {
+						    console.log(res.result.sum) // 3
+						  },
+						  fail: function(err) {
+						      console.log(err)
+						  }
+						})
+						// // that.strings=res.html;
 					},
 					fail:(res)=>{
 						console.log("fail：" + res);
@@ -170,7 +223,6 @@
 				if (!name) return
 				// console.log('format', name, value)
 				this.editorCtx.format(name, value)
-
 			},
 			onStatusChange(e) {
 				const formats = e.detail
@@ -239,7 +291,6 @@
 	.wrapper {
 		padding: 5px;
 	}
-
 	.iconfont {
 		display: inline-block;
 		padding: 8px 8px;
@@ -248,14 +299,11 @@
 		cursor: pointer;
 		font-size: 20px;
 	}
-
 	.toolbar {
 		box-sizing: border-box;
 		border-bottom: 0;
 		font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
 	}
-
-
 	.ql-container {
 		box-sizing: border-box;
 		padding: 12px 15px;
@@ -269,8 +317,27 @@
 		@include bd(1px solid #ccc);
 		@include mar(0 0 10px 0);
 	}
-
 	.ql-active {
 		color: #06c;
+	}
+	
+	.in-time{
+		@include flex;
+		@include mar(10px 0);
+	}
+	.time-name{
+		@include flc(14,20,#000);
+		@include mar(0 10px 0 0);
+	}
+	.label-main{
+		@include mar(10px 0);
+	}
+	.abstract{
+		@include bd(1px solid #ccc);
+		@include bdrs(10px);
+		@include w(100%);
+		@include pad(10px);
+		@include box-sz();
+		@include mar(10px 0);
 	}
 </style>

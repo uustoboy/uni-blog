@@ -11,7 +11,10 @@ export default {
 	onLaunch: function() {
 		console.log('App Launch');
 		
-		wx.cloud.init();
+		wx.cloud.init({
+			traceUser: true,
+			env:"uustoboy-yryxc"
+		});
 		let that = this;
 		let userInfo = uni.getStorageSync('userInfo')||'';
 		console.log(userInfo.openid);

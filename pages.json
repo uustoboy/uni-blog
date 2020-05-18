@@ -2,6 +2,12 @@
 	"cloud": true,
 	"pages": [
 		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "其文乐趣"
+			}
+		},
+		{
 		    "path" : "pages/editor/editor",
 		    "style" : {
 				"navigationBarTitleText": "编辑"
@@ -17,12 +23,6 @@
 		    "path" : "pages/search/search",
 		    "style" : {
 				"navigationBarTitleText": "搜索"
-			}
-		},
-		{
-			"path": "pages/index/index",
-			"style": {
-				"navigationBarTitleText": "其文乐趣"
 			}
 		},
 		{
