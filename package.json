@@ -4,6 +4,7 @@
     "wx-server-sdk": "^2.0.1"
   },
   "devDependencies": {
-    "base_mixins": "^1.0.7"
+    "base_mixins": "^1.0.7",
+    "tcb-router": "^1.1.2"
   }
 }

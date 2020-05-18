@@ -1,14 +1,18 @@
 <template>
 	<view class="container">
 		<scroll-view class="scroll">
-			<uni-card title="标题文字"  extra="额外信息" :note="Tips">
-			    内容主体，可自定义内容及样式
-				<template v-slot:footer>
-				        <view class="footer-box">
-				           <uni-tag text="标签" type="primary" size="small"></uni-tag>
-				        </view>
-				    </template>
-			</uni-card>
+			<view v-for="item in blogInfo" :key="item._id">
+				<uni-card :title="item.title"  :extra="item.date"  :note="true">
+					{{item.digest}}
+					<template v-slot:footer>
+						<view class="footer-box">
+							<view class="tags-info" v-for="(tags,tagsKey) in item.tags" :key="tagsKey">
+								 <uni-tag :text="tags.title" type="primary" size="small"></uni-tag>
+							</view>
+						</view>
+					</template>
+				</uni-card>
+			</view>
 		</scroll-view>
 	</view>
 </template>
@@ -25,23 +29,28 @@
 		},
 		data() {
 			return {
-				Tips:['vue','css']
+				Tips:['vue','css'],
+				blogInfo:[]
 			}
 		},
 		created(){
-			
+			let that = this;
 			 wx.cloud.callFunction({
 			      // 要调用的云函数名称
 			      name: "tcbRouter",
 			      // 传递给云函数的参数
 			      data: {
-			        $url: "user", // 要调用的路由的路径，传入准确路径或者通配符*
-			        
+			        $url: "blog", // 要调用的路由的路径，传入准确路径或者通配符*ss
 			      }
 			    }).then(res=>{
 			      console.log(res)
+				 
+				  if(res.errMsg='cloud.callFunction:ok'){
+					that.blogInfo = [...res.result.data]	
+				  }
+				  // that.res
 			    })
-			  
+			 console.log(that.blogInfo);
 		},
 		methods: {
 			
@@ -50,7 +59,12 @@
 </script>
 
 <style lang="scss">
-.container,.scroll{
+page{
+		@include bgc(#F2F2F2);
+		@include w(100%);
+		@include over-x(hidden);
+	}
+.container{
 	@include wh(100vw,100vh);
 }
 .container{
