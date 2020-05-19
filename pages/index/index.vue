@@ -2,6 +2,7 @@
 	<view class="container">
 		<scroll-view class="scroll">
 			<m-card :blogList="blogList"></m-card>
+			<view class="loading">{{loading}}</view>
 		</scroll-view>
 	</view>
 </template>
@@ -15,7 +16,9 @@
 		data() {
 			return {
 				page:-1,
-				blogList:[]
+				blogList:[],
+				loading:'LOADING',
+				lodingThrottle: true,
 			}
 		},
 		created(){
@@ -24,28 +27,43 @@
 		methods: {
 			getList: function(){
 				let that = this;
-				this.page =  this.page+1;
-				this.$requestCloud("tcbRouter",{
-					$url: "blog",
-					page: this.page
-				}).then(res=>{
-					that.blogList = [...res.result.data];
-				})
+				if(this.lodingThrottle){
+					this.lodingThrottle = false;
+					this.page =  this.page+1;
+					this.$requestCloud("tcbRouter",{
+						$url: "blog",
+						page: this.page
+					}).then(res=>{
+						console.log(res);
+						that.lodingThrottle = true;
+						that.blogList = [...res.result.data];
+					})
+				}
+				
 			}
+		},
+		onReachBottom: function() {
+			this.getList();
 		}
 	}
 </script>
 
 <style lang="scss">
-page{
+	page{
 		@include bgc(#F2F2F2);
 		@include w(100%);
 		@include over-x(hidden);
 	}
-.container{
-	@include wh(100vw,100vh);
-}
-.container{
-	@include bgc(#F2F2F2);
-}
+	.loading{
+		@include h(32);
+		@include flc(16px,32,#d14f4f);
+		@include tac();
+		@include mar(10px 0);
+	}
+	.container{
+		@include wh(100vw,100vh);
+	}
+	.container{
+		@include bgc(#F2F2F2);
+	}
 </style>

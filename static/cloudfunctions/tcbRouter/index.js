@@ -58,6 +58,27 @@ exports.main = async (event, context) => {
 		}
 		ctx.body={code:0,data:tags}
 	})
+	
+	//热门标签
+	// app.router('HotTags', async (ctx, next)=>{
+	// 	let HotTags
+	// 	try {
+	// 		HotTags = await db.collection('blog')
+	// 		.aggregate()
+	// 		 .project({
+	// 		    list: $.concatArrays(['$tags.title', '$classify.title']),
+	// 		  })
+	// 		.end()
+	// 		.then(res => {
+	// 		  return res.list;
+	// 		}).catch(err => {
+	// 			console.error(err)
+	// 		})
+	// 	} catch (e) {
+	// 		console.error(e);
+	// 	}
+	// 	ctx.body={code:0,data:HotTags}
+	// })
 
   return app.serve();
 }

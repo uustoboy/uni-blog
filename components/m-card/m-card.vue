@@ -36,7 +36,7 @@
 		},
 		data() {
 			return {
-				tagColorArr:['#8bc34a','#673ab7','#225d64']
+				tagColorArr:['#4AC41C','#673ab7','#225d64']
 			};
 		}
 	}

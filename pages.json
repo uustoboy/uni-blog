@@ -5,7 +5,7 @@
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "其文乐趣",
-				"enablePullDownRefresh": true//就是这个
+				 "enablePullDownRefresh": true
 			}
 		},
 		{
