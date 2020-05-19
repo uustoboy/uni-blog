@@ -1,8 +1,8 @@
 <template>
 	<view>
 		<view>
-			<m-label></m-label>
-			<m-label title="标签"></m-label>
+			<m-label :labels="tags"  @handleClick="handleClick"></m-label>
+			<m-label title="标签" :labels="classify" @handleClick="handleClick"></m-label>
 		</view>
 	</view>
 </template>
@@ -15,11 +15,25 @@
 		},
 		data() {
 			return {
-				
+				tags:[],
+				classify:[]
 			}
 		},
+		created(){
+			let that = this;
+			this.$requestCloud("tcbRouter",{$url: "getClassify"}).then(res=>{
+				console.log(res.result.data);
+				that.tags = res.result.data;
+			});
+			this.$requestCloud("tcbRouter",{$url: "getClassify",name:"classify"}).then(res=>{
+				console.log(res.result.data);
+				that.classify = res.result.data;
+			});
+		},
 		methods: {
-			
+			handleClick(id){
+				console.log(id);
+			}
 		}
 	}
 </script>

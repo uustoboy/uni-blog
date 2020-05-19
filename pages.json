@@ -4,7 +4,8 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "其文乐趣"
+				"navigationBarTitleText": "其文乐趣",
+				"enablePullDownRefresh": true//就是这个
 			}
 		},
 		{
@@ -16,7 +17,7 @@
 		{
 		    "path" : "pages/classify/classify",
 		    "style" : {
-				"navigationBarTitleText": "分类"
+				"navigationBarTitleText": "分类/标签"
 			}
 		},
 		{
@@ -37,7 +38,6 @@
 				"navigationBarTitleText": "关于我"
 			}
         }
-        
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",

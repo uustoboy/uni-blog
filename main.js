@@ -5,6 +5,9 @@ import store from './store/index.js'
 Vue.config.productionTip = false
 Vue.prototype.$store = store
 
+import {requestCloud} from './utils.js/utils.js'
+Vue.prototype.$requestCloud = requestCloud
+
 
 App.mpType = 'app'
 
