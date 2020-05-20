@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
 		<scroll-view class="scroll">
-			<m-card :blogList="blogList"></m-card>
+			<m-card @handleDigestClick="handleDigestClick" :blogList="blogList"></m-card>
 			<view class="loading">{{loading}}</view>
 		</scroll-view>
 	</view>
@@ -23,8 +23,17 @@
 		},
 		created(){
 			this.getList();
+			this.$requestCloud("tcbRouter",{
+				$url: "search",
+				name: 'vue'
+			}).then(res=>{
+				console.log(res);
+			})
 		},
 		methods: {
+			handleDigestClick(id){
+				console.log(id);
+			},
 			getList: function(){
 				let that = this;
 				if(this.lodingThrottle){

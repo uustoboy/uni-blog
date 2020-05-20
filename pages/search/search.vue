@@ -23,6 +23,9 @@
 		methods: {
 			search:function(value){
 				console.log(value.value)
+				uni.redirectTo({
+				    url: '../searchPage/searchPage'
+				});
 			}
 		}
 	}

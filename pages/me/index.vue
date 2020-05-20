@@ -1,6 +1,5 @@
 <template>
 	<view class="container">
-		
 		<view class="me-list me-head">
 			<view class="me-headLeft">
 				<image class="me-avatar" :src="oneself.avatarUrl"/>

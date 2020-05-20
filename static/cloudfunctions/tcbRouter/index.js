@@ -8,7 +8,8 @@ cloud.init({
 })
 
 const db = cloud.database()
-
+const _ = db.command;
+const blogCollection = db.collection('blog');
 // 云函数入口函数
 exports.main = async (event, context) => {
 	 const app = new TcbRouter({ event })
@@ -24,7 +25,7 @@ exports.main = async (event, context) => {
 		let blog
 		let page = event.page || 0;
 		try {
-			blog = await db.collection('blog').orderBy('date', 'desc').skip(page).limit(5).get().then(res => {
+			blog = await blogCollection.orderBy('date', 'desc').skip(page).limit(10).get().then(res => {
 				return res.data;
 			}).catch(err => {
 				console.error(err)
@@ -40,7 +41,7 @@ exports.main = async (event, context) => {
 		let classifyName = event.name || 'tags';
 		let tags
 		try {
-			tags = await db.collection('blog')
+			tags = await blogCollection
 			.aggregate()
 			.project({
 			    tagArr: `$${classifyName}.title`
@@ -79,6 +80,47 @@ exports.main = async (event, context) => {
 	// 	}
 	// 	ctx.body={code:0,data:HotTags}
 	// })
-
+	
+	//搜索;
+	app.router('search', async (ctx, next)=>{
+		let name = event.name; 
+		let result
+		try {
+			result = await blogCollection.where(_.or([
+				{
+					article: db.RegExp({
+					     	regexp: name,
+					     	options: 'i'
+					})
+				},
+				{
+					title: db.RegExp({
+				      	regexp: name,
+				      	options: 'i'
+				    })
+				},
+				{
+					'tags.title':  db.RegExp({
+				     	regexp: name,
+				     	options: 'i'
+				    })
+				},
+				{
+					'classify.title':  db.RegExp({
+				     	regexp: name,
+				     	options: 'i'
+				    })
+				}
+			])).get().then(res => {
+			  return res.data;
+			}).catch(err => {
+				console.error(err)
+			})
+		} catch (e) {
+			console.error(e);
+		}
+		ctx.body={code:0,data:result}
+	})
+	
   return app.serve();
 }

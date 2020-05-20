@@ -1,5 +1,4 @@
 {
-	"cloud": true,
 	"pages": [
 		{
 			"path": "pages/index/index",
@@ -8,7 +7,6 @@
 				 "enablePullDownRefresh": true
 			}
 		},
-		
 		{
 		    "path" : "pages/classify/classify",
 		    "style" : {
@@ -37,6 +35,12 @@
 		    "path" : "pages/editor/editor",
 		    "style" : {
 				"navigationBarTitleText": "编辑"
+			}
+		},
+		{
+		    "path" : "pages/searchPage/searchPage",
+		    "style" : {
+				"navigationBarTitleText": ""
 			}
 		}
     ],

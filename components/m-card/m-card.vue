@@ -2,11 +2,11 @@
 	<view>
 		<view v-for="item in blogList" :key="item._id">
 			<uni-card :title="item.title"  :extra="item.date"  :note="true">
-				<view class="digest-text">{{item.digest}}<text class="reading">Reading...</text></view>
+				<view class="digest-text" @click="handleClick(item._id)">{{item.digest}}<text class="reading">Reading...</text></view>
 				<template v-slot:footer>
 					<view class="footer-box">
 						<view class="tags-info" v-for="(tags,tagsKey) in item.tags" :key="tagsKey">
-							<view class="tags-label" :style="{background:tagColorArr[tagsKey]}">
+							<view @click="handleTagsClick(tags.title)" class="tags-label" :style="{background:tagColorArr[tagsKey]}">
 								{{tags.title}}
 							</view>
 						</view>
@@ -20,13 +20,11 @@
 <script>
 	import mIcon from '../icon/m-icon.vue'
 	import uniCard from '../uni-ui/uni-card/uni-card.vue'
-	import uniTag from "../uni-ui/uni-tag/uni-tag.vue"
 	
 	export default {
 		components:{
 			mIcon,
-			uniCard,
-			uniTag
+			uniCard
 		},
 		props: {
 			blogList:{
@@ -38,6 +36,14 @@
 			return {
 				tagColorArr:['#4AC41C','#673ab7','#225d64']
 			};
+		},
+		methods:{
+			handleClick(id){
+				this.$emit('handleDigestClick',id);
+			},
+			handleTagsClick(tag){
+				this.$emit('handleTagsClick',tag);
+			}
 		}
 	}
 </script>
