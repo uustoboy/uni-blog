@@ -66,13 +66,13 @@
 				</editor>
 				<view class="in-time">
 					<view class="time-name">输入时间:</view>
-					<KXDateTime :data='date' :end='enddate' :start='startdate' @rundata='kxdatetime'></KXDateTime>
+					<KXDateTime :date='date' :end='enddate' :start='startdate' @rundata='kxdatetime'></KXDateTime>
 				</view>
 				<view class="label-main">
 					<biner-input-tags @change="changeClassify" :selectlist='selectlistClassify' :disabled='disabledClassify' :placeholder='placeholderClassify'></biner-input-tags>
 				</view>
 				<view class="label-main">
-					<biner-input-tags @change="change" :selectlist='selectlist' :disabled='disabled' :placeholder='placeholder'></biner-input-tags>
+					<biner-input-tags @change="changetag" :selectlist='selectlist' :disabled='disabled' :placeholder='placeholder'></biner-input-tags>
 				</view>
 				<uni-title type="h3" title="摘要" align="center" color="#000" ></uni-title>
 				<textarea  placeholder="请输入摘要" class="abstract" :value="textareaValue" @blur="bindTextAreaBlur"/>
@@ -120,8 +120,8 @@
 			}
 		},
 		methods: {
-			bindTextAreaBlur: function (e) {
-				this.textareaValue=e.detail.value;
+			bindTextAreaBlur(e) {
+				this.textareaValue = e.detail.value;
 			 },
 			 kxdatetime(e){
 			            this.date=e
@@ -138,7 +138,7 @@
 			      this.html = html;
 			    },
 			// 监听变化的数据
-			change(arr){
+			changetag(arr){
 				console.log(arr)
 				if(arr.length>0){
 					this.selectlist=arr;
@@ -170,9 +170,12 @@
 				// classify:event.classify
 				this.editorCtx.getContents({
 					success:(res)=>{
-						console.log(res.html);
-						console.log(that.title);
-						console.log(that.date);
+						// console.log(res.html);
+						// console.log(that.title);
+						// console.log(that.date);
+						console.log(that.textareaValue);
+						console.log(that.selectlist);
+						console.log(that.selectlistClassify);
 						//小程序端调用方法
 						wx.cloud.init();
 						wx.cloud.callFunction({

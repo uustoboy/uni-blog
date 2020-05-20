@@ -35,8 +35,12 @@
 						page: this.page
 					}).then(res=>{
 						console.log(res);
-						that.lodingThrottle = true;
-						that.blogList = [...res.result.data];
+						if(res.result.data.length == 0){
+							that.loading='No Data';
+						}else{
+							that.lodingThrottle = true;
+							that.blogList = [...that.blogList,...res.result.data];
+						}
 					})
 				}
 				

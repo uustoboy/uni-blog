@@ -8,12 +8,7 @@
 				 "enablePullDownRefresh": true
 			}
 		},
-		{
-		    "path" : "pages/editor/editor",
-		    "style" : {
-				"navigationBarTitleText": "编辑"
-			}
-		},
+		
 		{
 		    "path" : "pages/classify/classify",
 		    "style" : {
@@ -37,7 +32,13 @@
             "style" : {
 				"navigationBarTitleText": "关于我"
 			}
-        }
+        },
+		{
+		    "path" : "pages/editor/editor",
+		    "style" : {
+				"navigationBarTitleText": "编辑"
+			}
+		}
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
