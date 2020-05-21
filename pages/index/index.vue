@@ -15,7 +15,7 @@
 		},
 		data() {
 			return {
-				page:-1,
+				page:0,
 				blogList:[],
 				loading:'LOADING',
 				lodingThrottle: true,
@@ -40,9 +40,11 @@
 				if(this.lodingThrottle){
 					this.lodingThrottle = false;
 					this.page =  this.page+1;
+					
+					console.log(this.page)
 					this.$requestCloud("tcbRouter",{
 						$url: "blog",
-						page: this.page
+						page: that.page
 					}).then(res=>{
 						console.log(res);
 						if(res.result.data.length == 0){

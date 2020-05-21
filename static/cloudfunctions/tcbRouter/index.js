@@ -15,19 +15,15 @@ const blogCollection = db.collection('blog');
 // 云函数入口函数
 exports.main = async (event, context) => {
 	const app = new TcbRouter({ event });
-
 	const wxContext = cloud.getWXContext()
-	// app.use 表示该中间件会适用于所有的路由
-	  app.use(async(ctx,next)=>{
-		ctx.data={}
-	   await next()
-	})
-
+	
 	app.router('blog', async (ctx, next) => {
 		let blog
-		let page = event.page || 0;
+		let page = parseInt(event.page) || 0;
 		try {
-			blog = await blogCollection.orderBy('date', 'desc').skip(page).limit(10).get().then(res => {
+			let skipNum = (page-1)*10;
+			
+			blog = await blogCollection.orderBy('date', 'desc').skip(skipNum).limit(10).field({_id: true,title: true,date: true,digest:true,tags:true,classify:true,}).get().then(res => {
 				return res.data;
 			}).catch(err => {
 				console.error(err)
@@ -113,27 +109,27 @@ exports.main = async (event, context) => {
 			result = await blogCollection.where(_.or([
 				{
 					article: db.RegExp({
-					     	regexp: name,
-					     	options: 'i'
+					     	regexp: name,
+					     	options: 'i'
 					})
 				},
 				{
 					title: db.RegExp({
-				      	regexp: name,
-				      	options: 'i'
-				    })
+				      	regexp: name,
+				      	options: 'i'
+				    })
 				},
 				{
 					'tags.title':  db.RegExp({
-				     	regexp: name,
-				     	options: 'i'
-				    })
+				     	regexp: name,
+				     	options: 'i'
+				    })
 				},
 				{
 					'classify.title':  db.RegExp({
-				     	regexp: name,
-				     	options: 'i'
-				    })
+				     	regexp: name,
+				     	options: 'i'
+				    })
 				}
 			])).orderBy('date', 'desc').get().then(res => {
 			  return res.data;
