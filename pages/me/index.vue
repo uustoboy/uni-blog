@@ -221,12 +221,6 @@
 </script>
 
 <style lang="scss">
-	page{
-		@include bgc(#F2F2F2);
-		@include w(100%);
-		@include over-x(hidden);
-	}
-	
 	.me-head{
 		@include rel;
 		@include flex;

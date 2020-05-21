@@ -8,17 +8,18 @@
 			}
 		},
 		{
-		    "path" : "pages/classify/classify",
-		    "style" : {
-				"navigationBarTitleText": "分类/标签"
-			}
-		},
-		{
 		    "path" : "pages/search/search",
 		    "style" : {
 				"navigationBarTitleText": "搜索"
 			}
 		},
+		{
+		    "path" : "pages/classify/classify",
+		    "style" : {
+				"navigationBarTitleText": "分类/标签"
+			}
+		},
+		
 		{
 			"path": "pages/me/index",
 			"style": {
@@ -43,6 +44,10 @@
 				"navigationBarTitleText": ""
 			}
 		}
+        ,{
+            "path" : "pages/article/article",
+            "style" : {}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",

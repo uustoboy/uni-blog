@@ -75,7 +75,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 /* 解决头条小程序组件内引入字体不生效的问题 */
 /* #ifdef MP-TOUTIAO */
 @font-face {
@@ -83,4 +83,9 @@ export default {
 	src: url('/static/uni.ttf');
 }
 /* #endif */
+page{
+	@include bgc(#eee);
+	@include w(100%);
+	@include over-x(hidden);
+}
 </style>

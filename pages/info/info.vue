@@ -34,7 +34,7 @@
 <style lang="scss">
 	page{
 		@include wh(100vw,100vh);
-		@include bgc(#F2F2F2);
+		@include bgc(#eee);
 		@include flex;
 		@include jc(center);
 		@include ai(center);

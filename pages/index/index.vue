@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
 		<scroll-view class="scroll">
-			<m-card @handleDigestClick="handleDigestClick" :blogList="blogList"></m-card>
+			<m-card @handleDigestClick="handleDigestClick" @handleTagsClick="handleTagsClick" :blogList="blogList"></m-card>
 			<view class="loading">{{loading}}</view>
 		</scroll-view>
 	</view>
@@ -23,16 +23,17 @@
 		},
 		created(){
 			this.getList();
-			this.$requestCloud("tcbRouter",{
-				$url: "search",
-				name: 'vue'
-			}).then(res=>{
-				console.log(res);
-			})
 		},
 		methods: {
 			handleDigestClick(id){
-				console.log(id);
+				uni.navigateTo({
+				    url: `../article/article?id=${id}`
+				});
+			},
+			handleTagsClick(tag){
+				uni.navigateTo({
+				    url: `../searchPage/searchPage?name=${tag}`
+				});
 			},
 			getList: function(){
 				let that = this;
@@ -48,7 +49,7 @@
 							that.loading='No Data';
 						}else{
 							that.lodingThrottle = true;
-							that.blogList = [...that.blogList,...res.result.data];
+							that.blogList.push(...res.result.data);
 						}
 					})
 				}
@@ -62,11 +63,6 @@
 </script>
 
 <style lang="scss">
-	page{
-		@include bgc(#F2F2F2);
-		@include w(100%);
-		@include over-x(hidden);
-	}
 	.loading{
 		@include h(32);
 		@include flc(16px,32,#d14f4f);

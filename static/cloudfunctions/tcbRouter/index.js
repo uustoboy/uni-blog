@@ -9,10 +9,12 @@ cloud.init({
 
 const db = cloud.database()
 const _ = db.command;
+const $ = db.command.aggregate;
 const blogCollection = db.collection('blog');
+
 // 云函数入口函数
 exports.main = async (event, context) => {
-	 const app = new TcbRouter({ event })
+	const app = new TcbRouter({ event });
 
 	const wxContext = cloud.getWXContext()
 	// app.use 表示该中间件会适用于所有的路由
@@ -60,26 +62,48 @@ exports.main = async (event, context) => {
 		ctx.body={code:0,data:tags}
 	})
 	
-	//热门标签
-	// app.router('HotTags', async (ctx, next)=>{
-	// 	let HotTags
-	// 	try {
-	// 		HotTags = await db.collection('blog')
-	// 		.aggregate()
-	// 		 .project({
-	// 		    list: $.concatArrays(['$tags.title', '$classify.title']),
-	// 		  })
-	// 		.end()
-	// 		.then(res => {
-	// 		  return res.list;
-	// 		}).catch(err => {
-	// 			console.error(err)
-	// 		})
-	// 	} catch (e) {
-	// 		console.error(e);
-	// 	}
-	// 	ctx.body={code:0,data:HotTags}
-	// })
+	//获取热门标签
+	app.router('hotTags', async (ctx, next)=>{
+		let HotTags
+		try {
+			HotTags = await db.collection('blog')
+			.aggregate()
+			.project({
+				_id:0,
+			    list: $.concatArrays(['$tags.title', '$classify.title']),
+			 })
+			.end()
+			.then(res => {
+				let lists = res.list;
+				let newList = [];
+				for(let value of lists){
+					newList = [...new Set(value.list)]
+				}
+				
+				if(newList.length > 5){
+					function getRandomArrayElements(arr, count) {
+					  var shuffled = arr.slice(0), i = arr.length, min = i - count, temp, index;
+					  while (i-- > min) {
+						  index = Math.floor((i + 1) * Math.random());
+						  temp = shuffled[index];
+						  shuffled[index] = shuffled[i];
+						  shuffled[i] = temp;
+					  }
+					  return shuffled.slice(min);
+					}
+					let randomArray = getRandomArrayElements(newList, 5);
+					return randomArray;
+				}else{
+					return newList;
+				}
+			}).catch(err => {
+				console.error(err)
+			})
+		} catch (e) {
+			console.error(e);
+		}
+		ctx.body={code:0,data:HotTags}
+	})
 	
 	//搜索;
 	app.router('search', async (ctx, next)=>{
@@ -111,7 +135,7 @@ exports.main = async (event, context) => {
 				     	options: 'i'
 				    })
 				}
-			])).get().then(res => {
+			])).orderBy('date', 'desc').get().then(res => {
 			  return res.data;
 			}).catch(err => {
 				console.error(err)
@@ -120,7 +144,22 @@ exports.main = async (event, context) => {
 			console.error(e);
 		}
 		ctx.body={code:0,data:result}
-	})
+	});
 	
-  return app.serve();
+	//获取内容;
+	app.router('getArticle', async (ctx, next)=>{
+		let id = event.id; 
+		let result
+		try {
+			result = await blogCollection.doc(id).get().then(res=>{
+				return res.data;
+			})
+		} catch (e) {
+			console.error(e);
+		}
+		ctx.body={code:0,data:result}
+	});
+	
+	
+	return app.serve();
 }
