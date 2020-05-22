@@ -17,6 +17,7 @@ exports.main = async (event, context) => {
 	const app = new TcbRouter({ event });
 	const wxContext = cloud.getWXContext()
 	
+	//获取列表;
 	app.router('blog', async (ctx, next) => {
 		let blog
 		let page = parseInt(event.page) || 0;
@@ -147,6 +148,12 @@ exports.main = async (event, context) => {
 		let id = event.id; 
 		let result
 		try {
+			await blogCollection.doc(id).update({
+				data:{
+					look: _.inc(1)
+				}
+			})
+			
 			result = await blogCollection.doc(id).get().then(res=>{
 				return res.data;
 			})
