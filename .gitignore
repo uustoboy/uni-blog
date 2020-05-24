@@ -5,6 +5,7 @@
 /.pnp
 .pnp.js
 unpackage
+node_modules
 
 # testing
 /coverage
