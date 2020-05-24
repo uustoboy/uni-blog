@@ -1,14 +1,16 @@
 {
     "name" : "uni-blog",
-    "appid" : "wx6d2b56387cdfc80d",
-    "description" : "",
+    "appid" : "__UNI__EAAEEAF",
+    "description" : "个人博客",
     "versionName" : "1.0.0",
     "versionCode" : "100",
     "transformPx" : false,
     "app-plus" : {
         "nvueCompiler" : "uni-app",
         "compilerVersion" : 3,
-        "modules" : {},
+        "modules" : {
+            "Share" : {}
+        },
         "distribute" : {
             "android" : {
                 "permissions" : [
@@ -37,13 +39,20 @@
                 ]
             },
             "ios" : {},
-            "sdkConfigs" : {}
+            "sdkConfigs" : {
+                "share" : {
+                    "weixin" : {
+                        "appid" : "wx6d2b56387cdfc80d",
+                        "UniversalLinks" : ""
+                    }
+                }
+            }
         }
     },
     "quickapp" : {},
     "mp-weixin" : {
-        "appid" : "wx6d2b56387cdfc80d", 
-		"cloudfunctionRoot": "./static/cloudfunctions/",
+        "appid" : "wx6d2b56387cdfc80d",
+        "cloudfunctionRoot" : "./static/cloudfunctions/",
         "setting" : {
             "urlCheck" : true,
             "es6" : true,

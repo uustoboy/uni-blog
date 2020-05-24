@@ -1,5 +1,6 @@
 <template>
 	<view>
+		<image :src="qr" mode="widthFix"></image>
 		<view class="article-top">
 			<view class="article-title">{{article.title}}</view>
 			<view class="article-basics">
@@ -54,11 +55,28 @@
 				   v-model="comment"   
 			       placeholder="评论" @input="onKeycomment" class="input " />  
 			<view class="share-main">
-				<view class="save-image">
+				<view class="save-image" @click="handleImg">
 					<uni-icons type="image" size="16" color="#fff"></uni-icons>
 				</view>
-				<view class="share-filled" @click="handleShare">
+				<view class="share-filled" @click="handleShare" open-type="share">
 					<uni-icons type="paperplane-filled" size="16" color="#fff"></uni-icons>
+				</view>
+			</view>
+		</view>
+		<view class="layer" v-show="layer">
+			<view class="layer-loadding" v-show="!layerLoading">
+				<view>
+					<image class="loading-img" src="../../static/img/synthesis.gif" mode="widthFix"></image>
+					<view class="loading-text">生成中...</view>
+				</view>
+			</view>
+			<view class="layer-mian" v-show="layerLoading">
+				<view class="layer-generate">
+					123
+				</view>
+				<view class="layer-btnMain">
+					<view class="layer-btnList"><text class="layer-btn">返回</text></view>
+					<view class="layer-btnList"><text class="layer-btn">保存图片</text></view>
 				</view>
 			</view>
 		</view>
@@ -84,16 +102,20 @@
 		},
 		data() {
 			return {
+				layer:false,
+				layerLoading: true,
+				qr:'',
 				tagColorArr:['#4AC41C','#673ab7','#225d64'],
 				article:'',
-				comment:''
+				comment:'',
+				title_id:''
 			}
 		},
 		onLoad(option){
 			// let id = option.id;
 			let id = '70d29fac5ec4ce730008b75710368de1';
 			let that = this;
-			
+			this.title_id = id;
 			this.$requestCloud("tcbRouter",{
 			 	$url: "getArticle",
 			 	id: id
@@ -109,19 +131,66 @@
 			onKeycomment(event){
 				 this.comment = event.target.value  
 			},
-			handleShare(){
-				uni.share({
-				    provider: "weixin",
-				    scene: "WXSceneSession",
-				    type: 1,
-				    summary: this.article.titile,
-				    success: function (res) {
-				        console.log("success:" + JSON.stringify(res));
-				    },
-				    fail: function (err) {
-				        console.log("fail:" + JSON.stringify(err));
-				    }
+			handleImg(){
+				let that = this;
+				this.$requestCloud("createQRCode",{
+				 	scene: `?id=${that.title_id}`,
+					path: 'pages/article/article'
+				}).then(res=>{
+					console.log(res)
+					that.qr = 'data:image/png;base64,'+uni.arrayBufferToBase64(res.result.data);
 				});
+			},
+			handleShare(){
+				console.log(1);
+				uni.share({
+				    provider: 'weixin',
+				    scene: "WXSceneSession",
+				    type: 5,
+				    imageUrl: 'https://img-cdn-qiniu.dcloud.net.cn/uniapp/app/share-logo@3.png',
+				    title: '欢迎体验uniapp',
+				    miniProgram: {
+				        id: 'gh_abcdefg',
+				        path: 'pages/index/index',
+				        type: 0,
+				        webUrl: 'http://uniapp.dcloud.io'
+				    },
+				    success: ret => {
+				        console.log(JSON.stringify(ret));
+				    },
+                    fail: function(err) {
+                        console.log("fail:" + JSON.stringify(err));
+                    }
+				});
+				  //分享到微信朋友
+		//                 uni.share({ 
+		//                     provider: "weixin",
+		//                     scene: "WXSceneSession",
+		//                     type: 0,
+		//                     href: "../",//这地址太长了，就省略了
+		//                     title: "你笑起来真好看",
+		//                     summary: "唐艺昕，你有火吗？没有,为何你点燃了我的心？",                         
+		//                     imageUrl: "http://images9.baihe.com/newHome/member/rows_b2.jpg",
+		//                     success: function(res) {
+		//                         console.log("success:" + JSON.stringify(res));
+		//                     },
+		//                     fail: function(err) {
+		//                         console.log("fail:" + JSON.stringify(err));
+		//                     }
+		//                 });
+				
+				// uni.share({
+				//     provider: "weixin",
+				//     scene: "WXSceneSession",
+				//     type: 1,
+				//     summary: this.article.titile,
+				//     success: function (res) {
+				//         console.log("success:" + JSON.stringify(res));
+				//     },
+				//     fail: function (err) {
+				//         console.log("fail:" + JSON.stringify(err));
+				//     }
+				// });
 			}
 		}
 	}
@@ -268,5 +337,51 @@
 	}
 	.share-filled{
 		@include bgc(#50768f);
+	}
+	
+	//
+	.layer{
+		@include fixed((l:0,t:0,w:100vw,h:100vh,z:100));
+		@include bgc(rgba(0,0,0,0.5));
+	}
+	.layer-loadding{
+		@include abs((t:0,l:0,w:100vw,h:100vh));
+		@include bgc(#181818);
+		@include flex;
+		@include jc(center);
+		@include ai(center);
+	}
+	.loading-img{
+		@include mar(0 auto);
+	}
+	.loading-text{
+		@include flc(14px,20px,#fff);
+		@include tac;
+	}
+	.layer-mian{
+		@include fixed((t:0,l:0,z:10));
+		@include wh(100%,100%);
+		@include flex;
+		@include fx-f(column);
+	}
+	.layer-generate{
+		@include fx(1);
+		@include bgc(#fff);
+	}
+	.layer-btnMain{
+		@include tac;
+		@include mar(30 0 0 0);
+	}
+	.layer-btnList{
+		@include mar(16px 0);
+	}
+	.layer-btn{
+		@include inblock;
+		@include h(38);
+		@include bgc(#3c5f81);
+		@include pad(0 22px);
+		@include bdrs(40);
+		@include flc(16,38,#fff);
+		@include bd(2 solid #fff);
 	}
 </style>
