@@ -6,6 +6,7 @@ const {
     WXMINIUser,
     WXMINIQR
 } = require('wx-js-utils');
+const TcbRouter = require('tcb-router'); //引用TcbRouter
 
 const appId = 'wx6d2b56387cdfc80d'; // 小程序 appId
 const secret = '750bd43b930a2a2e0d7a4a5db7694ee4'; // 小程序 secret
@@ -24,23 +25,42 @@ cloud.init({
  * 
  */
 exports.main = async (event, context) => {
-	let wXMINIUser = new WXMINIUser({
-		appId,secret
-	  })
-	  let access_token = await wXMINIUser.getAccessToken();
-	  let wXMINIQR = new WXMINIQR();
-	  let scene =  event.event;
-	  let is_hyaline = event.is_hyaline || true;
-	  let path = event.path;
-	  let width = event.width || 430;
-	  let auto_color = event.auto_color || true;
-	  let line_color = event.line_color ||{"r":0,"g":0,"b":0};
-	  let qrResult = await wXMINIQR.getMiniQRLimit({
-		  access_token,
-		  scene,
-		  path,
-		  line_color,
-		  is_hyaline
-	  });
-	  return qrResult;
+	const app = new TcbRouter({ event });
+	const wxContext = cloud.getWXContext()
+	
+	
+	//获取列表;
+	app.router('createQr', async (ctx, next) => {
+		let wXMINIUser = new WXMINIUser({
+			appId,secret
+		  })
+		  let access_token = await wXMINIUser.getAccessToken();
+		  let wXMINIQR = new WXMINIQR();
+		  let scene =  event.event;
+		  let is_hyaline = event.is_hyaline || true;
+		  let path = event.path;
+		  let width = event.width || 430;
+		  let auto_color = event.auto_color || true;
+		  let line_color = event.line_color ||{"r":0,"g":0,"b":0};
+		  let qrResult = await wXMINIQR.getMiniQRLimit({
+			  access_token,
+			  scene,
+			  path,
+			  line_color,
+			  is_hyaline
+		  });
+		  
+		  const upload = await cloud.uploadFile({
+			cloudPath: 'wxacode.png',
+			fileContent: qrResult,
+		  });
+		  ctx.body={code:0,data:upload.fileID}
+	});
+	
+	app.router('deleteQr', async (ctx, next) => {
+		let result = await cloud.deleteFile({ fileList: ['cloud://uustoboy-yryxc.7575-uustoboy-yryxc-1301998997/wxacode.png'] })
+		 
+		return { ...result }
+	});
+	return app.serve();
 }

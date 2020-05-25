@@ -1,6 +1,5 @@
 <template>
 	<view>
-		<image :src="qr" mode="widthFix"></image>
 		<view class="article-top">
 			<view class="article-title">{{article.title}}</view>
 			<view class="article-basics">
@@ -72,11 +71,13 @@
 			</view>
 			<view class="layer-mian" v-show="layerLoading">
 				<view class="layer-generate">
-					123
+					<view class="layer-canvas" :id="elId">
+						<canvas style="width:100%; height: 100%;" canvas-id="firstCanvas"></canvas>
+					</view>
 				</view>
 				<view class="layer-btnMain">
-					<view class="layer-btnList"><text class="layer-btn">返回</text></view>
-					<view class="layer-btnList"><text class="layer-btn">保存图片</text></view>
+					<view class="layer-btnList"><text class="layer-btn" @click="hideLoayer">返回</text></view>
+					<view class="layer-btnList"><text class="layer-btn" @click="saveImg">保存图片</text></view>
 				</view>
 			</view>
 		</view>
@@ -87,6 +88,7 @@
 	import uParse from '@/components/gaoyia-parse/parse.vue'
 	import uniIcons from "@/components/uni-ui/uni-icons/uni-icons.vue"
 	import mIcon from '@/components/icon/m-icon.vue'
+	let canvasMain = null;
 	export default {
 		filters:{
 			formatTime(value){
@@ -103,12 +105,14 @@
 		data() {
 			return {
 				layer:false,
-				layerLoading: true,
+				layerLoading: false,
 				qr:'',
 				tagColorArr:['#4AC41C','#673ab7','#225d64'],
 				article:'',
 				comment:'',
-				title_id:''
+				title_id:'',
+				canvasContext:null,
+				elId:'elId'
 			}
 		},
 		onLoad(option){
@@ -128,21 +132,98 @@
 			});
 		},
 		methods: {
-			onKeycomment(event){
-				 this.comment = event.target.value  
+			saveImg(){
+				console.log(111)
+				// uni.saveImageToPhotosAlbum({
+				// 	filePath: this.qr,
+				// 	success: function () {
+				// 		console.log('save success');
+				// 		this.layer = false;
+				// 	}
+				// });
+				// uni.downloadFile({
+				// 	url: this.qr,
+				// 	success: (res) =>{
+				// 		console.log(res)
+				// 		// if (res.statusCode === 200){
+				// 		// 	uni.saveImageToPhotosAlbum({
+				// 		// 		filePath: res.tempFilePath,
+				// 		// 		success: function() {
+				// 		// 			uni.showToast({
+				// 		// 				title: "保存成功",
+				// 		// 				icon: "none"
+				// 		// 			});
+				// 		// 		},
+				// 		// 		fail: function() {
+				// 		// 			uni.showToast({
+				// 		// 				title: "保存失败，请稍后重试",
+				// 		// 				icon: "none"
+				// 		// 			});
+				// 		// 		}
+				// 		// 	});
+				// 		// }
+				// 	}
+				// })
+			//重点：这边本来保存图片是写在draw之后，但第一次保存时空白，第二次才生效，写在draw回调里面就OK了。
+				that.canvasContext.draw(false,function(){
+					uni.canvasToTempFilePath({
+						canvasId:'firstCanvas',
+						success: function(res){
+							// uni.hideLoading()
+							// console.log(res.tempFilePath)
+							// uni.saveImageToPhotosAlbum({
+							// 	filePath:res.tempFilePath,
+							// 	success : function(res){
+							// 		uni.showToast({title : '图片已保存'})
+							// 	}
+							// })
+						}
+					})
+				})
+				
 			},
-			handleImg(){
+			hideLoayer(){
+				this.layer = false;
+			},
+			onKeycomment(event){
+				this.comment = event.target.value  
+			},
+			async handleImg (){
 				let that = this;
-				this.$requestCloud("createQRCode",{
+				this.layer = true;
+				 const json = await this.$requestCloud("createQRCode",{
+					$url: "createQr",
 				 	scene: `?id=${that.title_id}`,
 					path: 'pages/article/article'
 				}).then(res=>{
-					console.log(res)
-					that.qr = 'data:image/png;base64,'+uni.arrayBufferToBase64(res.result.data);
+					
+					that.layerLoading = true;
+					that.qr = res.result.data;
+					
+					canvasMain = uni.createCanvasContext('#firstCanvas');
+					canvasMain.setFillStyle('red'); 
+					// uni.createSelectorQuery().in(this).select(`#${this.elId}`).boundingClientRect().exec((ret) => {  
+					// 	console.log(ret)
+					// 	if(ret[0]){  
+					// 		// this.height = ret[0].height + 'px'  
+					// 		console.log(ret[0].height)  
+							
+					// 	}  
+					// });  
+					console.log(that.qr)
+					uni.getImageInfo({
+						src: that.qr,
+						success: function (image) {
+							console.log(image);
+							canvasMain.drawImage(image.path, 0, 0, 150, 100);
+							    canvasMain.draw();
+						}
+					});
+					
+					
 				});
 			},
 			handleShare(){
-				console.log(1);
 				uni.share({
 				    provider: 'weixin',
 				    scene: "WXSceneSession",
@@ -162,35 +243,6 @@
                         console.log("fail:" + JSON.stringify(err));
                     }
 				});
-				  //分享到微信朋友
-		//                 uni.share({ 
-		//                     provider: "weixin",
-		//                     scene: "WXSceneSession",
-		//                     type: 0,
-		//                     href: "../",//这地址太长了，就省略了
-		//                     title: "你笑起来真好看",
-		//                     summary: "唐艺昕，你有火吗？没有,为何你点燃了我的心？",                         
-		//                     imageUrl: "http://images9.baihe.com/newHome/member/rows_b2.jpg",
-		//                     success: function(res) {
-		//                         console.log("success:" + JSON.stringify(res));
-		//                     },
-		//                     fail: function(err) {
-		//                         console.log("fail:" + JSON.stringify(err));
-		//                     }
-		//                 });
-				
-				// uni.share({
-				//     provider: "weixin",
-				//     scene: "WXSceneSession",
-				//     type: 1,
-				//     summary: this.article.titile,
-				//     success: function (res) {
-				//         console.log("success:" + JSON.stringify(res));
-				//     },
-				//     fail: function (err) {
-				//         console.log("fail:" + JSON.stringify(err));
-				//     }
-				// });
 			}
 		}
 	}
@@ -367,10 +419,16 @@
 	.layer-generate{
 		@include fx(1);
 		@include bgc(#fff);
+		@include over-y(auto);
+	}
+	.layer-canvas{
+		@include wh(90%,100%);
+		@include mar(0 auto);
+		@include bgc(#ccc);
 	}
 	.layer-btnMain{
 		@include tac;
-		@include mar(30 0 0 0);
+		@include mar(20 0 0 0);
 	}
 	.layer-btnList{
 		@include mar(16px 0);
@@ -384,4 +442,5 @@
 		@include flc(16,38,#fff);
 		@include bd(2 solid #fff);
 	}
+	
 </style>
