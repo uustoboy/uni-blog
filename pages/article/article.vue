@@ -1,5 +1,6 @@
 <template>
 	<view>
+		
 		<view class="article-top">
 			<view class="article-title">{{article.title}}</view>
 			<view class="article-basics">
@@ -72,7 +73,7 @@
 			<view class="layer-mian" v-show="layerLoading">
 				<view class="layer-generate">
 					<view class="layer-canvas" :id="elId">
-						<canvas style="width:100%; height: 100%;" canvas-id="firstCanvas"></canvas>
+						<canvas style="width:100%;height: 120%;"  canvas-id="firstCanvas"></canvas>
 					</view>
 				</view>
 				<view class="layer-btnMain">
@@ -88,7 +89,7 @@
 	import uParse from '@/components/gaoyia-parse/parse.vue'
 	import uniIcons from "@/components/uni-ui/uni-icons/uni-icons.vue"
 	import mIcon from '@/components/icon/m-icon.vue'
-	let canvasMain = null;
+	import { mapState } from 'vuex'
 	export default {
 		filters:{
 			formatTime(value){
@@ -97,11 +98,7 @@
 				return time[0];
 			}
 		},
-		components:{
-			uParse,
-			uniIcons,
-			mIcon
-		},
+		computed:mapState(['hasLogin','userInfo']),
 		data() {
 			return {
 				layer:false,
@@ -111,7 +108,7 @@
 				article:'',
 				comment:'',
 				title_id:'',
-				canvasContext:null,
+				context:null,
 				elId:'elId'
 			}
 		},
@@ -130,6 +127,7 @@
 				　　title:title
 				});
 			});
+			console.log(this.userInfo)
 		},
 		methods: {
 			saveImg(){
@@ -198,10 +196,50 @@
 				}).then(res=>{
 					
 					that.layerLoading = true;
-					that.qr = res.result.data;
+					if(res.result.data){
+						that.qr = res.result.data;
+					}
 					
-					canvasMain = uni.createCanvasContext('#firstCanvas');
-					canvasMain.setFillStyle('red'); 
+					var context = uni.createCanvasContext('firstCanvas')
+					 context.setFillStyle('red'); //canvas背景颜色
+					 context.fillRect(0, 0, 475, 600);
+					 context.setFillStyle('#eee8aa')//文字颜色：默认黑色
+					 context.setFontSize(12)//设置字体大小，默认10
+					 context.textAlign = 'center'	// 设置位置
+					 context.font = 'normal 12px sans-serif';	// 字体样式
+					 console.log(that.userInfo)
+					 context.fillText("给您分享了一篇文章~", 120, 16);
+					 context.draw(true);
+					 
+					
+					
+					// uni.getImageInfo({
+					// 	src: that.qr,
+					// 	success: function (image) {
+					// 		console.log(image);
+					// 		context.drawImage(image.path, 0, 0, 150, 100);
+					// 		
+					// 	}
+					// });
+					// context.setFillStyle('#545a7a'); //canvas背景颜色
+					// context.fillRect(0, 0, 650, 420);
+					// console.log(context)
+					// context.setStrokeStyle("#00ff00")
+					// context.setLineWidth(5)
+					// context.rect(0, 0, 200, 200)
+					// context.stroke()
+					// context.setStrokeStyle("#ff0000")
+					// context.setLineWidth(2)
+					// context.moveTo(160, 100)
+					// context.arc(100, 100, 60, 0, 2 * Math.PI, true)
+					// context.moveTo(140, 100)
+					// context.arc(100, 100, 40, 0, Math.PI, false)
+					// context.moveTo(85, 80)
+					// context.arc(80, 80, 5, 0, 2 * Math.PI, true)
+					// context.moveTo(125, 80)
+					// context.arc(120, 80, 5, 0, 2 * Math.PI, true)
+					// context.stroke()
+					// context.draw()
 					// uni.createSelectorQuery().in(this).select(`#${this.elId}`).boundingClientRect().exec((ret) => {  
 					// 	console.log(ret)
 					// 	if(ret[0]){  
@@ -210,15 +248,8 @@
 							
 					// 	}  
 					// });  
-					console.log(that.qr)
-					uni.getImageInfo({
-						src: that.qr,
-						success: function (image) {
-							console.log(image);
-							canvasMain.drawImage(image.path, 0, 0, 150, 100);
-							    canvasMain.draw();
-						}
-					});
+					// console.log(that.qr)
+					
 					
 					
 				});

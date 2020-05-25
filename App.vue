@@ -23,7 +23,7 @@ export default {
 			uni.getStorage({
 				key:'unserInfo',
 				success:res=>{
-					this.login(res.data);
+					that.login(res.data);
 				}
 			})
 		}else{

@@ -39,7 +39,7 @@ exports.main = async (event, context) => {
 		  let scene =  event.event;
 		  let is_hyaline = event.is_hyaline || true;
 		  let path = event.path;
-		  let width = event.width || 430;
+		  let width = event.width || 230;
 		  let auto_color = event.auto_color || true;
 		  let line_color = event.line_color ||{"r":0,"g":0,"b":0};
 		  let qrResult = await wXMINIQR.getMiniQRLimit({
