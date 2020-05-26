@@ -9,8 +9,14 @@ export default {
 		...mapMutations(['login'])
 	},
 	onLaunch: function() {
-		console.log('App Launch');
 		
+		
+			
+		
+		
+	},
+	onShow: function() {
+		console.log('App Show');
 		wx.cloud.init({
 			traceUser: true,
 			env:"uustoboy-yryxc"
@@ -19,14 +25,17 @@ export default {
 		let userInfo = uni.getStorageSync('userInfo')||'';
 		console.log(userInfo.openid);
 		if(userInfo.openid){
+			console.log(1111)
 			//更新登陆状态
 			uni.getStorage({
-				key:'unserInfo',
+				key:'userInfo',
 				success:res=>{
+					console.log(res)
 					that.login(res.data);
 				}
 			})
 		}else{
+			console.log(2222)
 			// wx登录
 			wx.login({
 			  success (loginRes) {
@@ -44,7 +53,6 @@ export default {
 							name:'login',
 							success:cloudRes=>{
 								uni.hideLoading();
-								console.log(cloudRes);
 								let openid = cloudRes.result.openid;
 								userInfo.openid = openid;
 								that.login(res.userInfo);
@@ -62,12 +70,6 @@ export default {
 			  }
 			})
 		}
-			
-		
-		
-	},
-	onShow: function() {
-		console.log('App Show');
 	},
 	onHide: function() {
 		console.log('App Hide');

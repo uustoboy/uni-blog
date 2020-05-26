@@ -73,7 +73,7 @@
 			<view class="layer-mian" v-show="layerLoading">
 				<view class="layer-generate">
 					<view class="layer-canvas" :id="elId">
-						<canvas style="width:100%;height: 120%;"  canvas-id="firstCanvas"></canvas>
+						<canvas :style="{width:styleWidth,height:styleHeight}" canvas-id="firstCanvas"></canvas>
 					</view>
 				</view>
 				<view class="layer-btnMain">
@@ -109,7 +109,9 @@
 				comment:'',
 				title_id:'',
 				context:null,
-				elId:'elId'
+				elId:'elId',
+				styleWidth:'0px',
+				styleHeight:'0px'
 			}
 		},
 		onLoad(option){
@@ -200,55 +202,80 @@
 						that.qr = res.result.data;
 					}
 					
-					var context = uni.createCanvasContext('firstCanvas')
-					 context.setFillStyle('red'); //canvas背景颜色
-					 context.fillRect(0, 0, 475, 600);
-					 context.setFillStyle('#eee8aa')//文字颜色：默认黑色
-					 context.setFontSize(12)//设置字体大小，默认10
-					 context.textAlign = 'center'	// 设置位置
-					 context.font = 'normal 12px sans-serif';	// 字体样式
-					 console.log(that.userInfo)
-					 context.fillText("给您分享了一篇文章~", 120, 16);
-					 context.draw(true);
-					 
+					const { windowWidth, windowHeight } = uni.getSystemInfoSync();	
+					let endWidth = (windowWidth - 40);
+					let endHeight = (windowHeight - 40); 
+					that.styleWidth = endWidth+'px';
+					that.styleHeight = endHeight+'px';
+					let context = uni.createCanvasContext('firstCanvas')
+					context.setFillStyle('red'); //canvas背景颜色
+					context.fillRect(0, 0, endWidth, endHeight);
+					context.textAlign = 'center';	// 设置位置
+					context.setFillStyle('#eee8aa')//文字颜色：默认黑色
+					context.setFontSize(12);
+					let w = context.measureText("给您分享了一篇文章~").width;
+					context.fillText('给您分享了一篇文章~',endWidth/2, 100);
+					let w2 = context.measureText("给您分享了一篇文章~").width;
+					context.fillText(that.userInfo.nickName,endWidth/2, 80);
+					context.beginPath()
+					context.setFillStyle('#fff'); //canvas背景颜色
+					context.fillRect(20, 130, endWidth-40, endHeight-150);
+					context.beginPath()
+					context.setFillStyle('#000')//文字颜色：默认黑色
+					context.setFontSize(14);
+					context.fillText(that.article.title,30, 80);
 					
-					
-					// uni.getImageInfo({
-					// 	src: that.qr,
-					// 	success: function (image) {
-					// 		console.log(image);
-					// 		context.drawImage(image.path, 0, 0, 150, 100);
-					// 		
-					// 	}
-					// });
-					// context.setFillStyle('#545a7a'); //canvas背景颜色
-					// context.fillRect(0, 0, 650, 420);
-					// console.log(context)
-					// context.setStrokeStyle("#00ff00")
-					// context.setLineWidth(5)
-					// context.rect(0, 0, 200, 200)
-					// context.stroke()
-					// context.setStrokeStyle("#ff0000")
-					// context.setLineWidth(2)
-					// context.moveTo(160, 100)
-					// context.arc(100, 100, 60, 0, 2 * Math.PI, true)
-					// context.moveTo(140, 100)
-					// context.arc(100, 100, 40, 0, Math.PI, false)
-					// context.moveTo(85, 80)
-					// context.arc(80, 80, 5, 0, 2 * Math.PI, true)
-					// context.moveTo(125, 80)
-					// context.arc(120, 80, 5, 0, 2 * Math.PI, true)
-					// context.stroke()
-					// context.draw()
-					// uni.createSelectorQuery().in(this).select(`#${this.elId}`).boundingClientRect().exec((ret) => {  
-					// 	console.log(ret)
-					// 	if(ret[0]){  
-					// 		// this.height = ret[0].height + 'px'  
-					// 		console.log(ret[0].height)  
+					uni.getImageInfo({
+					 	src: 'cloud://uustoboy-yryxc.7575-uustoboy-yryxc-1301998997/_20200526171819.png',
+					 	success: function (image) {
+					 		console.log(image)
+							let ratio = (endWidth-40)/image.width;
+							let endImgHeight = image.height*ratio;
 							
-					// 	}  
-					// });  
-					// console.log(that.qr)
+					 		context.drawImage(image.path, 20, 130,endWidth-40, endImgHeight);
+							context.draw(true);
+					 	}
+					 });
+					 
+					 //圆点
+					 context.beginPath();
+					 context.arc(20,230+(endHeight-150)/2,10,0,2*Math.PI);
+					 context.fillStyle="red";
+					 context.fill();
+					 context.beginPath();
+					 context.arc((endWidth-40)+20,230+(endHeight-150)/2,10,0,2*Math.PI);
+					 context.fillStyle="red";
+					 context.fill();
+					 //横线
+					 context.beginPath();
+					 context.moveTo (40,230+(endHeight-150)/2);       //设置起点状态
+					 context.lineTo (endWidth-40,230+(endHeight-150)/2);       //设置末端状态
+					 context.lineWidth = 1;          //设置线宽状态
+					 context.strokeStyle = "#ccc" ;  //设置线的颜色状态
+					 context.stroke();               //进行绘制
+					uni.getImageInfo({
+						src: that.qr,
+						success: function (image) {
+							context.drawImage(image.path, endWidth/2-40, endHeight-150, 80, 80);
+							context.draw(true);
+						}
+					});			 
+					 context.draw(true);
+// 					uni.getImageInfo({
+//                         src:that.userInfo.avatarUrl,
+//                         success: (e) => {
+//                             const p = e.tempFilePath
+//                             console.log(e)
+//                         },
+//                         fail: (r) => {
+							
+//                         }
+//                     })
+					
+					
+					
+					
+					
 					
 					
 					
@@ -453,8 +480,8 @@
 		@include over-y(auto);
 	}
 	.layer-canvas{
-		@include wh(90%,100%);
-		@include mar(0 auto);
+		@include h(100%);
+		@include pad(0 20px);
 		@include bgc(#ccc);
 	}
 	.layer-btnMain{
