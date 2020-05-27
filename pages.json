@@ -1,16 +1,17 @@
 {
 	"pages": [
 		{
-		    "path" : "pages/article/article",
-		    "style" : {}
-		},
-		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "其文乐趣",
 				 "enablePullDownRefresh": true
 			}
 		},
+		{
+		    "path" : "pages/article/article",
+		    "style" : {}
+		},
+		
 		{
 		    "path" : "pages/search/search",
 		    "style" : {
@@ -54,40 +55,5 @@
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#4AC41C",
 		"backgroundColor": "#FFFFFF"
-	},
-	"tabBar":{
-	        "color":"#000",
-			"borderStyle": "black",
-		   "backgroundColor":"#fff",
-		   "fontSize":"14px",
-		   "height":"44px",
-		   "selectedColor":"#4AC41C",
-		   "position":"bottom",
-	        "list":[
-	            {
-	                "pagePath":"pages/index/index",
-	                "iconPath":"static/img/tabBar/home.png",
-	                "selectedIconPath":"static/img/tabBar/home-cur.png",
-	                "text":"首页"
-	            },
-				{
-				    "pagePath":"pages/search/search",
-				    "iconPath":"static/img/tabBar/search.png",
-				    "selectedIconPath":"static/img/tabBar/search-cur.png",
-				    "text":"搜索"
-				},
-				{
-				    "pagePath":"pages/classify/classify",
-				    "iconPath":"static/img/tabBar/classify.png",
-				    "selectedIconPath":"static/img/tabBar/classify-cur.png",
-				    "text":"分类"
-				},
-	            {
-	                "pagePath":"pages/me/index",
-	                "iconPath":"static/img/tabBar/me.png",
-	                "selectedIconPath":"static/img/tabBar/me-cur.png",
-	                "text":"我"
-	            }
-	        ]
-	    }
+	}
 }

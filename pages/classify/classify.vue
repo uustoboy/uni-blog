@@ -4,14 +4,17 @@
 			<m-label :labels="tags"  @handleClick="handleClick"></m-label>
 			<m-label title="标签" :labels="classify" @handleClick="handleClick"></m-label>
 		</view>
+		<uni-tabbar :selected="2"></uni-tabbar>
 	</view>
 </template>
 
 <script>
-	import mLabel from '@/components/m-label/m-label.vue'
+	import mLabel from '@/components/m-label/m-label.vue';
+	import uniTabbar from '@/components/uni-tabbar/uni-tabbar.vue';
 	export default {
 		components:{
-			mLabel
+			mLabel,
+			uniTabbar
 		},
 		data() {
 			return {

@@ -4,14 +4,17 @@
 			<m-card @handleDigestClick="handleDigestClick" @handleTagsClick="handleTagsClick" :blogList="blogList"></m-card>
 			<view class="loading">{{loading}}</view>
 		</scroll-view>
+		<uni-tabbar :selected="0"></uni-tabbar>
 	</view>
 </template>
 
 <script>
 	import mCard from '@/components/m-card/m-card.vue';
+	import uniTabbar from '@/components/uni-tabbar/uni-tabbar.vue';
 	export default {
 		components:{
-			mCard
+			mCard,
+			uniTabbar
 		},
 		data() {
 			return {

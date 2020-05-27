@@ -3,14 +3,17 @@
 		<scroll-view class="scroll">
 			<m-card @handleDigestClick="handleDigestClick" :blogList="blogList"></m-card>
 		</scroll-view>
+		<uni-tabbar :selected="2" :disabled="2"></uni-tabbar>
 	</view>
 </template>
 
 <script>
-	import mCard from '@/components/m-card/m-card.vue'
+	import mCard from '@/components/m-card/m-card.vue';
+	import uniTabbar from '@/components/uni-tabbar/uni-tabbar.vue';
 	export default {
 		components:{
-			mCard
+			mCard,
+			uniTabbar
 		},
 		data() {
 			return {

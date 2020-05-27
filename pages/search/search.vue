@@ -11,6 +11,7 @@
 		<view v-show="showLilst">
 			<m-card @handleDigestClick="handleDigestClick" @handleTagsClick="handleTagsClick" :blogList="blogList"></m-card>
 		</view>
+		<uni-tabbar :selected="1"></uni-tabbar>
 	</view>
 </template>
 
@@ -18,11 +19,13 @@
 	import uniSearchBar from '@/components/uni-ui/uni-search-bar/uni-search-bar.vue'
 	import mIcon from '@/components/icon/m-icon.vue'
 	import mCard from '@/components/m-card/m-card.vue'
+	import uniTabbar from '@/components/uni-tabbar/uni-tabbar.vue';
 	export default {
 		components:{
 			uniSearchBar,
 			mIcon,
-			mCard
+			mCard,
+			uniTabbar
 		},
 		data() {
 			return {

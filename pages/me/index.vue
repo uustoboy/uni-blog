@@ -37,6 +37,7 @@
 				</view>	
 			</view>
 		</uni-popup>
+		<uni-tabbar :selected="3"></uni-tabbar>
 	</view>
 </template>
 
@@ -49,6 +50,7 @@
 	import uCharts from '@/components/u-charts/u-charts.js'
 	import clipboard from "@/components/dc-clipboard/clipboard.js"
 	import mIcon from "@/components/icon/m-icon.vue"
+	import uniTabbar from '@/components/uni-tabbar/uni-tabbar.vue';
 	import {
 		mapState,
 		mapMutations
@@ -62,7 +64,8 @@
 			uniListItem,
 			uniIcons,
 			mIcon,
-			uniPopup
+			uniPopup,
+			uniTabbar
 		},
 		computed:mapState(['hasLogin','userInfo']),
 		data() {
