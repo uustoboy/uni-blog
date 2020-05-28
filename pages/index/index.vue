@@ -1,10 +1,15 @@
 <template>
 	<view class="container">
-		<scroll-view class="scroll">
-			<m-card @handleDigestClick="handleDigestClick" @handleTagsClick="handleTagsClick" :blogList="blogList"></m-card>
-			<view class="loading">{{loading}}</view>
-		</scroll-view>
-		<uni-tabbar :selected="0"></uni-tabbar>
+		<view>
+			<scroll-view class="scroll" @scroll="scroll" scroll-y="true" @scrolltoupper="scrolltoupper">
+				<m-card  @handleDigestClick="handleDigestClick" @handleTagsClick="handleTagsClick" :blogList="blogList"></m-card>
+				<view class="loading">{{loading}}</view>
+			</scroll-view>
+		</view>
+		<view class="index-scrollBar" :animation="animationData" >
+			<uni-tabbar :selected="0" position="absolute"></uni-tabbar>
+		</view>
+		
 	</view>
 </template>
 
@@ -18,16 +23,57 @@
 		},
 		data() {
 			return {
+				styleObj:'',
+				animationData: {},
 				page:0,
 				blogList:[],
 				loading:'LOADING',
 				lodingThrottle: true,
+				scrollTop: 0,
+				old: {
+					scrollTop: 0
+				},
+				scrollBar:0
 			}
+		},
+		 onUnload() {
+		  this.animationData = {}
+		  // 页面关闭后清空数据
+		},
+		onLoad(){
+			this.styleObj = {position:"absolute"};
+			this.animation = uni.createAnimation({
+				duration: 800,
+				timingFunction: 'ease',
+			});
+			
 		},
 		created(){
 			this.getList();
 		},
 		methods: {
+			running(num) {
+				this.animation.bottom(num).step({duration:1000})
+				this.animationData = this.animation.export()
+			 },
+			scrolltoupper(){
+				console.log(2121212);
+				this.running(0);
+				this.animationData = this.animation.export();
+				
+				// this.animationData = animation.export()
+			},
+			scroll(e){
+				console.log(e.detail.scrollTop)
+				let scrollT = e.detail.scrollTop;
+				let oldScrollT = this.old.scrollTop;
+				if(scrollT<oldScrollT){
+					this.running(0);
+				}else{
+					this.running(-50);
+				}
+				this.old.scrollTop = e.detail.scrollTop
+			},
 			handleDigestClick(id){
 				uni.navigateTo({
 				    url: `../article/article?id=${id}`
@@ -68,6 +114,7 @@
 </script>
 
 <style lang="scss">
+	$global-for-ie:false;
 	.loading{
 		@include h(32);
 		@include flc(16px,32,#d14f4f);
@@ -79,5 +126,14 @@
 	}
 	.container{
 		@include bgc(#F2F2F2);
+	}
+	.scroll{
+		@include h(100vh);
+	}
+	.index-scrollBar{
+		@include fixed((l:0,b:0,w:100vw,h:50,z:100));
+		@include bgc(#fff);
+		@include box-s(0px 0px 8px #d5d5d5);
+		@include flex;
 	}
 </style>

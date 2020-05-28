@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<view class="tab-bar">
+		<view class="tab-bar" :style={position:position}>
 			<view v-for="(item,index) in list" :key="index" class="tab-list" :class="selected==index?'tab-cur':''" @click="handleCLick(index)"> 
 				<view class="tab-img" >
 					<image :src="selected==index?item.selectedIconPath:item.iconPath" mode="widthFix" style="width:100%;height:100%;"></image>
@@ -21,6 +21,10 @@
 			disabled:{
 				type: String,
 				default: "-1"
+			},
+			position:{
+				type:String,
+				default: "fixed"
 			}
 		},
 		data() {
