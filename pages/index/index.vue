@@ -1,15 +1,14 @@
 <template>
 	<view class="container">
 		<view>
-			<scroll-view class="scroll" @scroll="scroll" scroll-y="true" @scrolltoupper="scrolltoupper">
+			<view class="scroll">
 				<m-card  @handleDigestClick="handleDigestClick" @handleTagsClick="handleTagsClick" :blogList="blogList"></m-card>
 				<view class="loading">{{loading}}</view>
-			</scroll-view>
+			</view>
 		</view>
-		<view class="index-scrollBar" :animation="animationData" >
+		<view class="index-scrollBar" :animation="animationData">
 			<uni-tabbar :selected="0" position="absolute"></uni-tabbar>
 		</view>
-		
 	</view>
 </template>
 
@@ -23,7 +22,6 @@
 		},
 		data() {
 			return {
-				styleObj:'',
 				animationData: {},
 				page:0,
 				blogList:[],
@@ -56,24 +54,6 @@
 				this.animation.bottom(num).step({duration:1000})
 				this.animationData = this.animation.export()
 			 },
-			scrolltoupper(){
-				console.log(2121212);
-				this.running(0);
-				this.animationData = this.animation.export();
-				
-				// this.animationData = animation.export()
-			},
-			scroll(e){
-				console.log(e.detail.scrollTop)
-				let scrollT = e.detail.scrollTop;
-				let oldScrollT = this.old.scrollTop;
-				if(scrollT<oldScrollT){
-					this.running(0);
-				}else{
-					this.running(-50);
-				}
-				this.old.scrollTop = e.detail.scrollTop
-			},
 			handleDigestClick(id){
 				uni.navigateTo({
 				    url: `../article/article?id=${id}`
@@ -104,7 +84,18 @@
 						}
 					})
 				}
-				
+			}
+		},
+		onPageScroll:function(e){
+			let scrollT = e.scrollTop;
+			let oldScrollT = this.old.scrollTop;
+			if(scrollT>10){
+				if(scrollT<oldScrollT){
+				this.running(0);
+				}else{
+				this.running(-50);
+				}
+				this.old.scrollTop = e.scrollTop
 			}
 		},
 		onReachBottom: function() {

@@ -91,6 +91,11 @@
 	import mIcon from '@/components/icon/m-icon.vue'
 	import { mapState } from 'vuex'
 	export default {
+		components:{
+			uParse,
+			uniIcons,
+			mIcon
+		},
 		filters:{
 			formatTime(value){
 				if (!value) return '';
