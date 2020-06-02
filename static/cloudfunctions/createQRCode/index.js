@@ -33,28 +33,29 @@ exports.main = async (event, context) => {
 	app.router('createQr', async (ctx, next) => {
 		let wXMINIUser = new WXMINIUser({
 			appId,secret
-		  })
-		  let access_token = await wXMINIUser.getAccessToken();
-		  let wXMINIQR = new WXMINIQR();
-		  let scene =  event.event;
-		  let is_hyaline = event.is_hyaline || true;
-		  let path = event.path;
-		  let width = event.width || 230;
-		  let auto_color = event.auto_color || true;
-		  let line_color = event.line_color ||{"r":0,"g":0,"b":0};
-		  let qrResult = await wXMINIQR.getMiniQRLimit({
-			  access_token,
-			  scene,
-			  path,
-			  line_color,
-			  is_hyaline
-		  });
+		});
+		let access_token = await wXMINIUser.getAccessToken();
+		let wXMINIQR = new WXMINIQR();
+		let scene =  event.event;
+		let is_hyaline = event.is_hyaline || true;
+		let path = event.path;
+		let width = event.width || 230;
+		let auto_color = event.auto_color || true;
+		let line_color = event.line_color ||{"r":0,"g":0,"b":0};
+		let qrResult = await wXMINIQR.getMiniQRLimit({
+			access_token,
+			scene,
+			path,
+			line_color,
+			is_hyaline
+		});
 		  
-		  const upload = await cloud.uploadFile({
+	  const upload = await cloud.uploadFile({
 			cloudPath: 'wxacode.png',
 			fileContent: qrResult,
 		  });
-		  ctx.body={code:0,data:upload.fileID}
+		 // console.log(qrResult)
+		ctx.body={code:0,data:upload.fileID}
 	});
 	
 	app.router('deleteQr', async (ctx, next) => {

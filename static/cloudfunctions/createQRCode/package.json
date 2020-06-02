@@ -9,9 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-	"tcb-router": "^1.1.2",
-    "wx-server-sdk": "latest",
-	"wx-js-utils": "1.0.0",
-	"canvas" : "2.6.1"
+    "tcb-router": "^1.1.2",
+    "wx-js-utils": "1.0.0",
+    "wx-server-sdk": "latest"
   }
 }
