@@ -242,47 +242,41 @@
 					 	}
 					 });
 					 
+					 
+					 
 					 //圆点
 					 context.beginPath();
-					 context.arc(20,230+(endHeight-150)/2,10,0,2*Math.PI);
+					 context.arc(20,(endHeight*0.7),10,0,2*Math.PI);
 					 context.fillStyle="red";
 					 context.fill();
 					 context.beginPath();
-					 context.arc((endWidth-40)+20,230+(endHeight-150)/2,10,0,2*Math.PI);
+					 context.arc((endWidth-40)+20,(endHeight*0.7),10,0,2*Math.PI);
 					 context.fillStyle="red";
 					 context.fill();
 					 //横线
 					 context.beginPath();
-					 context.moveTo (40,230+(endHeight-150)/2);       //设置起点状态
-					 context.lineTo (endWidth-40,230+(endHeight-150)/2);       //设置末端状态
+					 context.moveTo (40,(endHeight*0.7));       //设置起点状态
+					 context.lineTo (endWidth-40,(endHeight*0.7));       //设置末端状态
 					 context.lineWidth = 1;          //设置线宽状态
 					 context.strokeStyle = "#ccc" ;  //设置线的颜色状态
 					 context.stroke();               //进行绘制
 					uni.getImageInfo({
 						src: that.qr,
 						success: function (image) {
-							context.drawImage(image.path, endWidth/2-40, endHeight-150, 80, 80);
+							context.drawImage(image.path,(endWidth/2)-((endWidth/2)*0.5/2), endHeight*0.75,(endWidth/2)*0.5,(endWidth/2)*0.5);
 							context.draw(true);
 						}
-					});			 
+					});		
+						 
+					context.textAlign = 'center';	// 设置位置
+					context.setFillStyle('#eee8aa')//文字颜色：默认黑色
+					context.setFontSize(12);
+					// let ws = context.measureText("长按小程序码阅读~").width;
+					context.fillText('长按小程序码阅读',endWidth/2,endHeight*0.75+(endWidth/2)*0.5+30);
+						
 					 context.draw(true);
-// 					uni.getImageInfo({
-//                         src:that.userInfo.avatarUrl,
-//                         success: (e) => {
-//                             const p = e.tempFilePath
-//                             console.log(e)
-//                         },
-//                         fail: (r) => {
-							
-//                         }
-//                     })
-					
-					
-					
-					
-					
-					
-					
+
+
 					
 				});
 			},

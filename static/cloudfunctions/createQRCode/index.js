@@ -11,7 +11,6 @@ const TcbRouter = require('tcb-router'); //引用TcbRouter
 const appId = 'wx6d2b56387cdfc80d'; // 小程序 appId
 const secret = '750bd43b930a2a2e0d7a4a5db7694ee4'; // 小程序 secret
 
-
 // 初始化 cloud
 cloud.init({
   // API 调用都保持和云函数当前所在环境一致
@@ -27,7 +26,10 @@ cloud.init({
 exports.main = async (event, context) => {
 	const app = new TcbRouter({ event });
 	const wxContext = cloud.getWXContext()
-	
+	// const {
+	//     createCanvas,
+	//     loadImage
+	// } = require('canvas')
 	
 	//获取列表;
 	app.router('createQr', async (ctx, next) => {
@@ -54,7 +56,8 @@ exports.main = async (event, context) => {
 			cloudPath: 'wxacode.png',
 			fileContent: qrResult,
 		  });
-		  ctx.body={code:0,data:upload.fileID}
+		 ctx.body={code:0,data:upload.fileID}
+		
 	});
 	
 	app.router('deleteQr', async (ctx, next) => {
