@@ -56,13 +56,7 @@ exports.main = async (event, context) => {
 			cloudPath: 'wxacode.png',
 			fileContent: qrResult,
 		  });
-<<<<<<< HEAD
 		 ctx.body={code:0,data:upload.fileID}
-		
-=======
-		 // console.log(qrResult)
-		ctx.body={code:0,data:upload.fileID}
->>>>>>> 2302ca508a68b9b1907f9b59d6c8317d0d3b06eb
 	});
 	
 	app.router('deleteQr', async (ctx, next) => {

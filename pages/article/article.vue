@@ -116,7 +116,8 @@
 				context:null,
 				elId:'elId',
 				styleWidth:'0px',
-				styleHeight:'0px'
+				styleHeight:'0px',
+				imgPath: null
 			}
 		},
 		onLoad(option){
@@ -139,52 +140,12 @@
 		methods: {
 			saveImg(){
 				console.log(111)
-				// uni.saveImageToPhotosAlbum({
-				// 	filePath: this.qr,
-				// 	success: function () {
-				// 		console.log('save success');
-				// 		this.layer = false;
-				// 	}
-				// });
-				// uni.downloadFile({
-				// 	url: this.qr,
-				// 	success: (res) =>{
-				// 		console.log(res)
-				// 		// if (res.statusCode === 200){
-				// 		// 	uni.saveImageToPhotosAlbum({
-				// 		// 		filePath: res.tempFilePath,
-				// 		// 		success: function() {
-				// 		// 			uni.showToast({
-				// 		// 				title: "保存成功",
-				// 		// 				icon: "none"
-				// 		// 			});
-				// 		// 		},
-				// 		// 		fail: function() {
-				// 		// 			uni.showToast({
-				// 		// 				title: "保存失败，请稍后重试",
-				// 		// 				icon: "none"
-				// 		// 			});
-				// 		// 		}
-				// 		// 	});
-				// 		// }
-				// 	}
-				// })
-			//重点：这边本来保存图片是写在draw之后，但第一次保存时空白，第二次才生效，写在draw回调里面就OK了。
-				that.canvasContext.draw(false,function(){
-					uni.canvasToTempFilePath({
-						canvasId:'firstCanvas',
-						success: function(res){
-							// uni.hideLoading()
-							// console.log(res.tempFilePath)
-							// uni.saveImageToPhotosAlbum({
-							// 	filePath:res.tempFilePath,
-							// 	success : function(res){
-							// 		uni.showToast({title : '图片已保存'})
-							// 	}
-							// })
-						}
-					})
-				})
+				uni.saveImageToPhotosAlbum({
+					filePath: this.imgPath,
+					success: function () {
+						console.log('save success');
+					}
+				});
 				
 			},
 			hideLoayer(){
@@ -192,6 +153,18 @@
 			},
 			onKeycomment(event){
 				this.comment = event.target.value  
+			},
+			 //这是一个封装好的方法 
+			promisify: api => {
+				return (options, ...params) => {
+					return new Promise((resolve, reject) => {
+						const extras = {
+							success: resolve,
+							fail: reject
+						}
+						api({ ...options, ...extras }, ...params)
+					})
+				}
 			},
 			async handleImg (){
 				let that = this;
@@ -205,72 +178,102 @@
 				this.layerLoading = true;
 				this.qr = json.result.data;
 				
+				const wxGetImageInfo = this.promisify(uni.getImageInfo);
+				const wxDownLoadFile = this.promisify(uni.downloadFile)
 				
-				const { windowWidth, windowHeight } = uni.getSystemInfoSync();	
-				let endWidth = (windowWidth - 40);
-				let endHeight = (windowHeight - 40); 
-				this.styleWidth = endWidth+'px';
-				this.styleHeight = endHeight+'px';
-				let context = uni.createCanvasContext('firstCanvas')
-				context.setFillStyle('red'); //canvas背景颜色
-				context.fillRect(0, 0, endWidth, endHeight);
-				context.textAlign = 'center';	// 设置位置
-				context.setFillStyle('#eee8aa')//文字颜色：默认黑色
-				context.setFontSize(12);
-				let w = context.measureText("给您分享了一篇文章~").width;
-				context.fillText('给您分享了一篇文章~',endWidth/2, 100);
-				let w2 = context.measureText("给您分享了一篇文章~").width;
-				context.fillText(that.userInfo.nickName,endWidth/2, 80);
-				context.beginPath()
-				context.setFillStyle('#fff'); //canvas背景颜色
-				context.fillRect(20, 130, endWidth-40, endHeight-150);
-				context.beginPath()
-				context.setFillStyle('#000')//文字颜色：默认黑色
-				context.setFontSize(14);
-				context.fillText(that.article.title,30, 80);
+				Promise.all([
+						// 图片目前只随机找了几张图片，后期可自行替换
+						wxGetImageInfo({
+								src: 'cloud://uustoboy-yryxc.7575-uustoboy-yryxc-1301998997/_20200526171819.png'   // 背景图片
+						}),
+						wxGetImageInfo({
+								src: this.userInfo.avatarUrl   // 二维码图片，二维码图片如需要携带参数，可根据接口将需要扫码进入页面的路径+参数传入后端，后端可根据生产小程序二维码路径，将路径放入这里就ok了,<a href="https://www.jianshu.com/p/5f96a4f91b9c" target="_blank">可参考</a>
+						}),
+						wxGetImageInfo({
+								src: that.qr   // 二维码图片，二维码图片如需要携带参数，可根据接口将需要扫码进入页面的路径+参数传入后端，后端可根据生产小程序二维码路径，将路径放入这里就ok了,<a href="https://www.jianshu.com/p/5f96a4f91b9c" target="_blank">可参考</a>
+						})
+				]).then(res => {
 					
-				// uni.getImageInfo({
-				// 	src: this.userInfo.avatarUrl,
-				// 	success: function(image) {
-				// 		console.log(image)
-				// 	},
-				// 	fail(err) {
+					const { windowWidth, windowHeight } = uni.getSystemInfoSync();
+					let endWidth = (windowWidth - 40);
+					let endHeight = (windowHeight - 40); 
+					that.styleWidth = endWidth+'px';
+					that.styleHeight = endHeight+'px';
+					let context = uni.createCanvasContext('firstCanvas')
+					context.setFillStyle('red'); //canvas背景颜色
+					context.fillRect(0, 0, endWidth, endHeight);
+					// context.textAlign = 'center';	// 设置位置
+					context.setTextAlign('center');
+					context.setFillStyle('#eee8aa')//文字颜色：默认黑色
+					context.font = 'normal bold 12px sans-serif';
+					context.fillText('给您分享了一篇文章~',endWidth/2, 100);
+					context.fillText(that.userInfo.nickName,endWidth/2, 80);
+					context.beginPath()
+					context.setFillStyle('#fff'); //canvas背景颜色
+					context.fillRect(20, 130, endWidth-40, endHeight-150);
+					context.save()
+					
+					let endImgHeight
+					// await uni.getImageInfo({
+					// 	src: 'cloud://uustoboy-yryxc.7575-uustoboy-yryxc-1301998997/_20200526171819.png',
+					// 	success: function (image) {
+					// 		console.log(image)
+							let ratio = (endWidth-40)/res[0].width;
+							endImgHeight = res[0].height*ratio;
+							context.drawImage(res[0].path, 20, 130,endWidth-40, endImgHeight);
+							context.beginPath();
+							context.setTextAlign('left');
+							context.setFillStyle('#000')//文字颜色：默认黑色
+							context.font = 'normal bold 16px sans-serif';
+							context.fillText(that.article.title,30, 130+endImgHeight+30);
+							context.font = 'normal 16px sans-serif';
+							
+							var initHeight = 130+endImgHeight+60; //绘制字体距离canvas顶部初始的高度
+							var lastSunStrIndex = 0; //每次开始截取的字符串的索引
+							var contentWidth = 0;
+							var canvasWidth = endWidth-40;
+							if (context.measureText(that.article.digest).width <= canvasWidth) {
+								context.fillText(that.article.digest, 30, initHeight);
+							}else{
+								for (let i = 0; i < that.article.digest.length; i++) {
+									contentWidth += context.measureText(that.article.digest[i]).width;
+									if (contentWidth > canvasWidth - 32) {
+										context.fillText(that.article.digest.substring(lastSunStrIndex, i), 30, initHeight) //绘制未截取的部分
+										initHeight += 25;
+										contentWidth = 0;
+										lastSunStrIndex = i;
+									}
+									if (i == that.article.digest.length - 1) {
+										context.fillText(that.article.digest.substring(lastSunStrIndex, i + 1), 30, initHeight);
+									}
 						
-				// 	}
-				// });
-				console.log(this.userInfo.avatarUrl);
-				context.drawImage(this.userInfo.avatarUrl, 0, 0,50,50);
-				context.draw(true);
-					// uni.getImageInfo({
-					//  	src: 'cloud://uustoboy-yryxc.7575-uustoboy-yryxc-1301998997/_20200526171819.png',
-					//  	success: function (image) {
-					//  		console.log(image)
-					// 		let ratio = (endWidth-40)/image.width;
-					// 		let endImgHeight = image.height*ratio;
-					// 		context.drawImage(image.path, 20, 130,endWidth-40, endImgHeight);
-					// 		context.draw(true);
-					//  	}
-					//  });
+								}
+							}
+							
+							
+							// context.fillText(that.article.digest,30, );
+							
+							
+						// }
+					 // });
 					
-					// context.drawImage(that.qr, 0, 0,50, 50);
-					// context.draw(true);
-					// context.drawImage(that.userInfo.avatarUrl, 0, 0,50, 50);
-					// context.draw(true);
-					
-					// console.log(this.userInfo.avatarUrl) 
-					 // wx.downloadFile({
-					 //       url: this.userInfo.avatarUrl,
-					 //       success: function (res) {
-					 //         // that.setData({
-					 //         //   shareAvatarPath: res.tempFilePath
-					 //         // })
-					 //         console.log(res.tempFilePath);
-					 //       }
-					 //  })
-					 
-<<<<<<< HEAD
-					 
-					 
+					//绘制头像;
+					// await wx.downloadFile({
+					//     url: this.userInfo.avatarUrl,
+					//     success: function (res) {
+							context.save()
+							//绘制头像
+							context.beginPath(); //开始绘制
+							//先画个圆，前两个参数确定了圆心 （x,y） 坐标  第三个参数是圆的半径  四参数是绘图方向  默认是false，即顺时针
+							context.arc((endWidth/2), 35, 25, 0, Math.PI * 2, false);
+							context.clip(); //画好了圆 剪切  原始画布中剪切任意形状和尺寸。
+							// 一旦剪切了某个区域，则所有之后的绘图都会被限制在被剪切的区域内 这也是我们要save上下文的原因
+							context.drawImage(res[1].path,(endWidth/2)-25, 10,50,50);
+							context.restore(); //恢复之前保存的绘图上下文 恢复之前保存的绘图问下文即状态 还可以继续绘制
+							// context.draw(true);
+					 //    }
+					 // })
+							 
 					 //圆点
 					 context.beginPath();
 					 context.arc(20,(endHeight*0.7),10,0,2*Math.PI);
@@ -287,69 +290,49 @@
 					 context.lineWidth = 1;          //设置线宽状态
 					 context.strokeStyle = "#ccc" ;  //设置线的颜色状态
 					 context.stroke();               //进行绘制
-					uni.getImageInfo({
-						src: that.qr,
-						success: function (image) {
-							context.drawImage(image.path,(endWidth/2)-((endWidth/2)*0.5/2), endHeight*0.75,(endWidth/2)*0.5,(endWidth/2)*0.5);
-							context.draw(true);
-						}
-					});		
+					// await uni.getImageInfo({
+						// src: that.qr,
+						// success: function (image) {
+							context.drawImage(res[2].path,(endWidth/2)-((endWidth/2)*0.5/2), endHeight*0.75,(endWidth/2)*0.5,(endWidth/2)*0.5);
+							// context.draw(true);
+						// }
+					// });		
 						 
 					context.textAlign = 'center';	// 设置位置
 					context.setFillStyle('#eee8aa')//文字颜色：默认黑色
 					context.setFontSize(12);
 					// let ws = context.measureText("长按小程序码阅读~").width;
-					context.fillText('长按小程序码阅读',endWidth/2,endHeight*0.75+(endWidth/2)*0.5+30);
+					context.fillText('长按小程序码阅读',endWidth/2,endHeight*0.75+(endWidth/2)*0.5+15);
+					context.draw(true,()=>{
+						console.log('123123')
+						 setTimeout(()=>{
+							uni.canvasToTempFilePath({
+								canvasId: 'firstCanvas',
+								fileType: 'jpg',
+								x: 0,
+								y: 0,
+								width: endWidth,
+								height: windowHeight,
+								destWidth: windowWidth,
+								destHeight: windowHeight,
+								success: function(res) {
+									console.log('baocu')
+									
+									that.imgPath = res.tempFilePath;
+									console.log(that.imgPath)
+									return
+								},
+								fail: function(error) {
+									console.log(error)
+								}
+							}) 
+						 }, 300);
 						
-					 context.draw(true);
-
-
-=======
-				//圆点
-				context.beginPath();
-				context.arc(20,230+(endHeight-150)/2,10,0,2*Math.PI);
-				context.fillStyle="red";
-				context.fill();
-				context.beginPath();
-				context.arc((endWidth-40)+20,230+(endHeight-150)/2,10,0,2*Math.PI);
-				context.fillStyle="red";
-				context.fill();
-				//横线
-				context.beginPath();
-				context.moveTo (40,230+(endHeight-150)/2);       //设置起点状态
-				context.lineTo (endWidth-40,230+(endHeight-150)/2);       //设置末端状态
-				context.lineWidth = 1;          //设置线宽状态
-				context.strokeStyle = "#ccc" ;  //设置线的颜色状态
-				context.stroke();               //进行绘制
-				context.draw(true);
-				uni.getImageInfo({
-					src: that.qr,
-					success: function (image) {
-						context.drawImage(image.path, endWidth/2-40, endHeight-150, 80, 80);
-						context.draw(true);
-					}
-				});			 
-				context.draw(true);
-// 					uni.getImageInfo({
-//                         src:that.userInfo.avatarUrl,
-//                         success: (e) => {
-//                             const p = e.tempFilePath
-//                             console.log(e)
-//                         },
-//                         fail: (r) => {
-							
-//                         }
-//                     })
+					});
 					
 					
-					
-					
-					
-					
-					
->>>>>>> 2302ca508a68b9b1907f9b59d6c8317d0d3b06eb
-					
-				// });
+				})
+				
 			},
 			handleShare(){
 				uni.share({
