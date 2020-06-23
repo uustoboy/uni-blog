@@ -72,9 +72,9 @@
 			</view>
 			<view class="layer-mian" v-show="layerLoading">
 				<view class="layer-generate">
-					<view class="layer-canvas" :id="elId">
-						<canvas :style="{width:styleWidth,height:styleHeight}" canvas-id="firstCanvas"></canvas>
-					</view>
+					<!-- <view class="layer-canvas" :id="elId"> -->
+						<canvas :style="{width:styleWidth,height:styleHeight}" canvas-id="firstCanvas" class="firstCanvas"></canvas>
+					<!-- </view> -->
 				</view>
 				<view class="layer-btnMain">
 					<view class="layer-btnList"><text class="layer-btn" @click="hideLoayer">返回</text></view>
@@ -194,9 +194,9 @@
 						})
 				]).then(res => {
 					
-					const { windowWidth, windowHeight } = uni.getSystemInfoSync();
+					const { windowWidth, windowHeight,pixelRatio } = uni.getSystemInfoSync();
 					let endWidth = (windowWidth - 40);
-					let endHeight = (windowHeight - 40); 
+					let endHeight = (windowHeight - 42); 
 					that.styleWidth = endWidth+'px';
 					that.styleHeight = endHeight+'px';
 					let context = uni.createCanvasContext('firstCanvas')
@@ -312,9 +312,9 @@
 								x: 0,
 								y: 0,
 								width: endWidth,
-								height: windowHeight,
-								destWidth: windowWidth,
-								destHeight: windowHeight,
+								height: endHeight,
+								destWidth: endWidth*pixelRatio,
+								destHeight: endHeight*pixelRatio,
 								success: function(res) {
 									console.log('baocu')
 									
@@ -529,7 +529,9 @@
 	}
 	.layer-generate{
 		@include fx(1);
-		@include bgc(#fff);
+		@include h(95%);
+		@include ai(center);
+		@include jc(center);
 		@include over-y(auto);
 	}
 	.layer-canvas{
@@ -538,20 +540,24 @@
 		@include bgc(#ccc);
 	}
 	.layer-btnMain{
+		@include flex;
 		@include tac;
-		@include mar(20 0 0 0);
+		@include ai(center);
+		@include jc(center);
+		// @include mar(20 0 0 0);
 	}
 	.layer-btnList{
-		@include mar(16px 0);
+		// @include mar(16px 0);
 	}
 	.layer-btn{
 		@include inblock;
 		@include h(38);
 		@include bgc(#3c5f81);
 		@include pad(0 22px);
-		@include bdrs(40);
 		@include flc(16,38,#fff);
 		@include bd(2 solid #fff);
 	}
-	
+	.firstCanvas{
+		@include mar(0 auto);
+	}
 </style>

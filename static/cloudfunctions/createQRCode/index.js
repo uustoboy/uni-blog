@@ -52,7 +52,7 @@ exports.main = async (event, context) => {
 			is_hyaline
 		});
 		  
-	  const upload = await cloud.uploadFile({
+		const upload = await cloud.uploadFile({
 			cloudPath: 'wxacode.png',
 			fileContent: qrResult,
 		  });
